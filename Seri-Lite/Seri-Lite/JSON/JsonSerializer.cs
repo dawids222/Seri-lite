@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Seri_Lite.JSON.enums;
+using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
@@ -15,10 +16,13 @@ namespace Seri_Lite.JSON
 
         public string Serialize(object value)
         {
+            if (value is null) return "null"; // TODO: add abstract null handling mechanism
+            if (value is int) { return value.ToString(); }
+            if (value is string) { return $"\"{value}\""; }
+
             var stringBuilder = new StringBuilder();
 
             var type = value.GetType();
-
             if (IsPrimitive(type))
             {
                 var serialized = SerializePrimitive(value);
@@ -61,71 +65,75 @@ namespace Seri_Lite.JSON
             return stringBuilder.ToString();
         }
 
-        private static bool IsPrimitive(Type type) => type.IsPrimitive || type == typeof(Decimal) || type == typeof(String) || type == typeof(DateTime);
-        private static bool IsCollection(Type type) => typeof(ICollection).IsAssignableFrom(type);
+        private static bool IsPrimitive(Type type)
+            => type.IsPrimitive ||
+               type == typeof(Decimal) ||
+               type == typeof(String) ||
+               type == typeof(DateTime);
+
+        private static bool IsCollection(Type type)
+            => typeof(ICollection).IsAssignableFrom(type);
 
         private static string SerializePrimitive(PropertyInfo property, object value)
         {
-            try
-            {
-                var v = property.GetValue(value); // TODO: adapt for string/number/bool
-                return $"\"{property.Name}\":\"{v}\"";
-            }
-            catch (Exception)
-            {
-                return value.ToString();
-            }
+            var primitiveValue = property.GetValue(value);
+            var serialized = SerializePrimitive(primitiveValue);
+            return $"\"{property.Name}\":{serialized}";
         }
+
         private static string SerializePrimitive(object value)
         {
-            return $"\"{value}\"";
+            var type = GetPrimitiveType(value);
+            return SerializePrimitive(value, type);
+        }
+        private static string SerializePrimitive(object value, PrimitiveType type)
+        {
+            return type switch
+            {
+                PrimitiveType.STRING => $"\"{value}\"",
+                PrimitiveType.BOOLEAN => value.ToString().ToLower(),
+                PrimitiveType.NUMERIC => value.ToString().Replace(",", "."),
+                _ => throw new NotImplementedException(),
+            };
+        }
+        private static PrimitiveType GetPrimitiveType(object value)
+        {
+            var type = value.GetType();
+            if (type == typeof(String)) { return PrimitiveType.STRING; }
+            if (type == typeof(Boolean)) { return PrimitiveType.BOOLEAN; }
+            return PrimitiveType.NUMERIC;
         }
         private string SerializeCollection(PropertyInfo property, object value)
         {
-            var v = property.GetValue(value) as ICollection;
-
+            var collectionValue = (ICollection)property.GetValue(value);
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append($"\"{property.Name}\":[");
-
-            var last = GetLastElementOf(v);
-            foreach (var x in v)
-            {
-                var serialized = Serialize(x);
-                stringBuilder.Append(serialized);
-                if (x != last)
-                {
-                    stringBuilder.Append(",");
-                }
-            }
-
-            stringBuilder.Append("]");
+            stringBuilder.Append($"\"{property.Name}\":");
+            var serialized = SerializeCollection(collectionValue);
+            stringBuilder.Append(serialized);
             return stringBuilder.ToString();
         }
         private string SerializeCollection(object value)
         {
-            var v = value as ICollection;
-
+            var collectionValue = (ICollection)value;
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append("[");
 
-            var last = GetLastElementOf(v);
-            foreach (var x in v)
+            var enumerator = collectionValue.GetEnumerator();
+            stringBuilder.Append('[');
+            while (enumerator.MoveNext())
             {
-                var serialized = Serialize(x);
+                var serialized = Serialize(enumerator.Current);
                 stringBuilder.Append(serialized);
-                if (x != last)
-                {
-                    stringBuilder.Append(",");
-                }
+                stringBuilder.Append(',');
             }
+            stringBuilder.Replace(",", "", stringBuilder.Length - 1, 1);
+            stringBuilder.Append(']');
 
-            stringBuilder.Append("]");
             return stringBuilder.ToString();
         }
         private string SerializeObject(PropertyInfo property, object value) // TODO: adapt for infinite reference loop
         {
-            var v = property.GetValue(value);
-            var serialized = Serialize(v);
+            var objectValue = property.GetValue(value);
+            var serialized = Serialize(objectValue);
             return $"\"{property.Name}\":{serialized}";
         }
         private string SerializeObject(object value) // TODO: adapt for infinite reference loop
@@ -133,28 +141,16 @@ namespace Seri_Lite.JSON
             var stringBuilder = new StringBuilder();
             var properties = value.GetType().GetProperties();
             var last = properties.LastOrDefault();
-            stringBuilder.Append("{");
+            stringBuilder.Append('{');
             foreach (var property in properties)
             {
                 // TODO: add ignore NULL?
                 // TODO: add case settings
                 stringBuilder.Append(Serialize(property, value));
-                if (property != last) { stringBuilder.Append(","); }
+                if (property != last) { stringBuilder.Append(','); }
             }
-            stringBuilder.Append("}");
+            stringBuilder.Append('}');
             return stringBuilder.ToString(); ;
-        }
-
-        // TODO: move to extension
-        private object GetLastElementOf(ICollection collection)
-        {
-            var enumerator = collection.GetEnumerator();
-            object current = null;
-            while (enumerator.MoveNext())
-            {
-                current = enumerator.Current;
-            }
-            return current;
         }
     }
 }
