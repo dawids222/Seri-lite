@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using Seri_Lite.JSON;
+using System;
 using System.Collections;
+using NewtonsoftJsonConvert = Newtonsoft.Json.JsonConvert;
 
 namespace Seri_Lite_Unit_Tests.JSON
 {
@@ -15,21 +17,55 @@ namespace Seri_Lite_Unit_Tests.JSON
             _serializer = new JsonSerializer();
         }
 
-        // TODO: rename + move
-        class X : IEnumerable
+        [TestCaseSource(typeof(SerializationObjectSource))]
+        public void Serialize_ReturnsSameValueAsNewtonsoftJsonConvert(object value)
+        {
+            var expected = NewtonsoftJsonConvert.SerializeObject(value);
+
+            var result = _serializer.Serialize(value);
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestCaseSource(typeof(SerializationObjectSource))]
+        public void Serialize_ExecutesFasterThanNewtonsoftJsonConvert(object value)
+        {
+            var maxExecutionTime = MeasureExecutionTime(() => NewtonsoftJsonConvert.SerializeObject(value));
+
+            var actualExecutionTime = MeasureExecutionTime(() => _serializer.Serialize(value));
+
+            Assert.That(actualExecutionTime, Is.LessThan(maxExecutionTime));
+        }
+
+        private static double MeasureExecutionTime(Action action)
+        {
+            var start = DateTime.Now;
+            action.Invoke();
+            var end = DateTime.Now;
+            var timeSpan = end - start;
+            return timeSpan.TotalMilliseconds;
+        }
+
+        class SerializationObjectSource : IEnumerable
         {
             public IEnumerator GetEnumerator()
             {
-                yield return ((object)new { }, "{}");
-                yield return ((object)new { Name = "Test" }, "{\"Name\":\"Test\"}");
-                yield return ((object)new { Person = new { Name = "Test1", Surname = "Test2" } }, "{\"Person\":{\"Name\":\"Test1\",\"Surname\":\"Test2\"}}");
-                yield return ((object)new { Names = new string[] { "Test1", "Test2" } }, "{\"Names\":[\"Test1\",\"Test2\"]}");
-                yield return ((object)new string[] { "Test1", "Test2" }, "[\"Test1\",\"Test2\"]");
-                yield return ((object)new
+                yield return (object)new { };
+                yield return (object)1;
+                yield return (object)true;
+                yield return (object)"Test";
+                yield return (object)new { Name = "Test" };
+                yield return (object)new { Person = new { Name = "Test1", Surname = "Test2" } };
+                yield return (object)new { Names = new string[] { "Test1", "Test2" } };
+                yield return (object)new string[] { "Test1", "Test2" };
+                yield return (object)new
                 {
                     Person = new
                     {
                         Name = "Test1",
+                        Age = 18,
+                        Height = 180.5,
+                        Married = false,
                         Address = new
                         {
                             City = "Test2",
@@ -49,16 +85,8 @@ namespace Seri_Lite_Unit_Tests.JSON
                             },
                         },
                     },
-                }, "{\"Person\":{\"Name\":\"Test1\",\"Address\":{\"City\":\"Test2\",\"Street\":\"Test3\"},\"Pets\":[{\"Name\":\"Test4\",\"Species\":\"Test5\"},{\"Name\":\"Test6\",\"Species\":\"Test7\"}]}}");
+                };
             }
-        }
-
-        [TestCaseSource(typeof(X))]
-        public void Y((object, string) z)
-        {
-            var result = _serializer.Serialize(z.Item1);
-
-            Assert.AreEqual(z.Item2, result);
         }
     }
 }
