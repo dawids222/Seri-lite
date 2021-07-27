@@ -1,4 +1,4 @@
-﻿namespace Seri_Lite.JSON.enums
+﻿namespace Seri_Lite.JSON.Enums
 {
     internal enum PrimitiveType
     {

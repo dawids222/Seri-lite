@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using Seri_Lite.JSON;
+using Seri_Lite.JSON.Serialization.Property;
 using System;
 using System.Collections;
-using NewtonsoftJsonConvert = Newtonsoft.Json.JsonConvert;
 
 namespace Seri_Lite_Unit_Tests.JSON
 {
@@ -14,13 +14,33 @@ namespace Seri_Lite_Unit_Tests.JSON
         [SetUp]
         public void SetUp()
         {
-            _serializer = new JsonSerializer();
+            var propertyNameResolver = new InheritCasePropertyNameResolver();
+            _serializer = new JsonSerializer(propertyNameResolver);
         }
 
         [TestCaseSource(typeof(SerializationObjectSource))]
-        public void Serialize_ReturnsSameValueAsNewtonsoftJsonConvert(object value)
+        public void Serialize_PropertyNameInheritCase_ReturnsSameValueAsNewtonsoftJsonConvert(object value)
         {
-            var expected = NewtonsoftJsonConvert.SerializeObject(value);
+            var expected = Newtonsoft.Json.JsonConvert.SerializeObject(value);
+
+            var result = _serializer.Serialize(value);
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestCaseSource(typeof(SerializationObjectSource))]
+        public void Serialize_PropertyNameCamelCase_ReturnsSameValueAsNewtonsoftJsonConvert(object value)
+        {
+            var propertyNameResolver = new CamelCasePropertyNameResolver();
+            _serializer = new JsonSerializer(propertyNameResolver);
+            var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+                ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+                {
+                    NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
+                },
+            };
+            var expected = Newtonsoft.Json.JsonConvert.SerializeObject(value, settings);
 
             var result = _serializer.Serialize(value);
 
@@ -30,11 +50,19 @@ namespace Seri_Lite_Unit_Tests.JSON
         [TestCaseSource(typeof(SerializationObjectSource))]
         public void Serialize_ExecutesFasterThanNewtonsoftJsonConvert(object value)
         {
-            var maxExecutionTime = MeasureExecutionTime(() => NewtonsoftJsonConvert.SerializeObject(value));
+            var maxExecutionTime = MeasureExecutionTime(() => Newtonsoft.Json.JsonConvert.SerializeObject(value));
 
             var actualExecutionTime = MeasureExecutionTime(() => _serializer.Serialize(value));
 
             Assert.That(actualExecutionTime, Is.LessThan(maxExecutionTime));
+        }
+
+        [Test]
+        public void Constructor_NullPropertyNameResolver_Throws()
+        {
+            static void act() => new JsonSerializer(null);
+
+            Assert.Throws<ArgumentNullException>(act);
         }
 
         private static double MeasureExecutionTime(Action action)

@@ -1,4 +1,5 @@
-﻿using Seri_Lite.JSON.enums;
+﻿using Seri_Lite.JSON.Enums;
+using Seri_Lite.JSON.Serialization.Property;
 using System;
 using System.Collections;
 using System.Linq;
@@ -9,6 +10,15 @@ namespace Seri_Lite.JSON
 {
     public class JsonSerializer : ISerializer
     {
+        private IPropertyNameResolver _propertyNameResolver;
+
+        public JsonSerializer(
+            IPropertyNameResolver propertyNameResolver)
+        {
+            _propertyNameResolver = propertyNameResolver ??
+                throw new ArgumentNullException(nameof(propertyNameResolver));
+        }
+
         public T Deserialize<T>(string value)
         {
             throw new NotImplementedException();
@@ -74,11 +84,12 @@ namespace Seri_Lite.JSON
         private static bool IsCollection(Type type)
             => typeof(ICollection).IsAssignableFrom(type);
 
-        private static string SerializePrimitive(PropertyInfo property, object value)
+        private string SerializePrimitive(PropertyInfo property, object value)
         {
             var primitiveValue = property.GetValue(value);
             var serialized = SerializePrimitive(primitiveValue);
-            return $"\"{property.Name}\":{serialized}";
+            var propertyName = _propertyNameResolver.Resolve(property);
+            return $"\"{propertyName}\":{serialized}";
         }
 
         private static string SerializePrimitive(object value)
@@ -107,9 +118,9 @@ namespace Seri_Lite.JSON
         {
             var collectionValue = (ICollection)property.GetValue(value);
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append($"\"{property.Name}\":");
+            var propertyName = _propertyNameResolver.Resolve(property);
             var serialized = SerializeCollection(collectionValue);
-            stringBuilder.Append(serialized);
+            stringBuilder.Append($"\"{propertyName}\":{serialized}");
             return stringBuilder.ToString();
         }
         private string SerializeCollection(object value)
@@ -134,7 +145,8 @@ namespace Seri_Lite.JSON
         {
             var objectValue = property.GetValue(value);
             var serialized = Serialize(objectValue);
-            return $"\"{property.Name}\":{serialized}";
+            var propertyName = _propertyNameResolver.Resolve(property);
+            return $"\"{propertyName}\":{serialized}";
         }
         private string SerializeObject(object value) // TODO: adapt for infinite reference loop
         {
@@ -145,7 +157,6 @@ namespace Seri_Lite.JSON
             foreach (var property in properties)
             {
                 // TODO: add ignore NULL?
-                // TODO: add case settings
                 stringBuilder.Append(Serialize(property, value));
                 if (property != last) { stringBuilder.Append(','); }
             }
