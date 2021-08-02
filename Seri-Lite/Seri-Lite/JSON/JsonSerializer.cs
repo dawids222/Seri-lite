@@ -10,11 +10,20 @@ namespace Seri_Lite.JSON
 {
     public class JsonSerializer : ISerializer
     {
-        private IPropertyNameResolver _propertyNameResolver;
+        private readonly NullPropertyBehaviour _nullPropertyBehaviour;
+        private readonly IPropertyNameResolver _propertyNameResolver;
+
+        public JsonSerializer()
+        {
+            _nullPropertyBehaviour = NullPropertyBehaviour.SERIALIZE;
+            _propertyNameResolver = new InheritCasePropertyNameResolver();
+        }
 
         public JsonSerializer(
+            NullPropertyBehaviour nullPropertyBehaviour,
             IPropertyNameResolver propertyNameResolver)
         {
+            _nullPropertyBehaviour = nullPropertyBehaviour;
             _propertyNameResolver = propertyNameResolver ??
                 throw new ArgumentNullException(nameof(propertyNameResolver));
         }
@@ -26,7 +35,7 @@ namespace Seri_Lite.JSON
 
         public string Serialize(object value)
         {
-            if (value is null) return "null"; // TODO: add abstract null handling mechanism
+            if (value is null) return "null";
             if (value is int) { return value.ToString(); }
             if (value is string) { return $"\"{value}\""; }
 
@@ -97,6 +106,7 @@ namespace Seri_Lite.JSON
             var type = GetPrimitiveType(value);
             return SerializePrimitive(value, type);
         }
+
         private static string SerializePrimitive(object value, PrimitiveType type)
         {
             return type switch
@@ -107,6 +117,7 @@ namespace Seri_Lite.JSON
                 _ => throw new NotImplementedException(),
             };
         }
+
         private static PrimitiveType GetPrimitiveType(object value)
         {
             var type = value.GetType();
@@ -114,6 +125,7 @@ namespace Seri_Lite.JSON
             if (type == typeof(Boolean)) { return PrimitiveType.BOOLEAN; }
             return PrimitiveType.NUMERIC;
         }
+
         private string SerializeCollection(PropertyInfo property, object value)
         {
             var collectionValue = (ICollection)property.GetValue(value);
@@ -123,6 +135,7 @@ namespace Seri_Lite.JSON
             stringBuilder.Append($"\"{propertyName}\":{serialized}");
             return stringBuilder.ToString();
         }
+
         private string SerializeCollection(object value)
         {
             var collectionValue = (ICollection)value;
@@ -141,13 +154,20 @@ namespace Seri_Lite.JSON
 
             return stringBuilder.ToString();
         }
+
         private string SerializeObject(PropertyInfo property, object value) // TODO: adapt for infinite reference loop
         {
             var objectValue = property.GetValue(value);
+            if (ShouldIgnoreProperty(objectValue)) { return ""; }
             var serialized = Serialize(objectValue);
             var propertyName = _propertyNameResolver.Resolve(property);
             return $"\"{propertyName}\":{serialized}";
         }
+
+        private bool ShouldIgnoreProperty(object value)
+            => _nullPropertyBehaviour == NullPropertyBehaviour.IGNORE &&
+               value is null;
+
         private string SerializeObject(object value) // TODO: adapt for infinite reference loop
         {
             var stringBuilder = new StringBuilder();
@@ -156,7 +176,6 @@ namespace Seri_Lite.JSON
             stringBuilder.Append('{');
             foreach (var property in properties)
             {
-                // TODO: add ignore NULL?
                 stringBuilder.Append(Serialize(property, value));
                 if (property != last) { stringBuilder.Append(','); }
             }
