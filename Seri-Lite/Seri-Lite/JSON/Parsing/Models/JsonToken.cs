@@ -14,9 +14,9 @@ namespace Seri_Lite.JSON.Parsing.Models
             Parent = parent;
         }
 
-        public bool IsObject => this is JsonObject;
-        public bool IsArray => this is JsonArray;
-        public bool IsPrimitive => this is JsonPrimitive;
+        public bool IsObject => TokenType == JsonTokenType.OBJECT;
+        public bool IsArray => TokenType == JsonTokenType.ARRAY;
+        public bool IsPrimitive => TokenType == JsonTokenType.PRIMITIVE;
 
         public JsonObject AsObject() => this as JsonObject;
         public JsonArray AsArray() => this as JsonArray;
