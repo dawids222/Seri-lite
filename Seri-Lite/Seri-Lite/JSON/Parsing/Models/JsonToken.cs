@@ -1,7 +1,10 @@
-﻿namespace Seri_Lite.JSON.Parsing.Models
+﻿using Seri_Lite.JSON.Parsing.Enums;
+
+namespace Seri_Lite.JSON.Parsing.Models
 {
     public abstract class JsonToken
     {
+        public abstract JsonTokenType TokenType { get; }
         public JsonToken Parent { get; }
         public JsonToken Root => GetRoot();
 

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Seri_Lite.JSON.Parsing.Enums;
 using Seri_Lite.JSON.Parsing.Exceptions;
 using Seri_Lite.JSON.Parsing.Models;
 using System.Linq;
@@ -56,6 +57,14 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
             var jsonPrimitive = _jsonObject.AsPrimitive();
 
             Assert.IsNull(jsonPrimitive);
+        }
+
+        [Test]
+        public void TokenType_ReturnsObjectType()
+        {
+            var type = _jsonObject.TokenType;
+
+            Assert.AreEqual(JsonTokenType.OBJECT, type);
         }
 
         [Test]

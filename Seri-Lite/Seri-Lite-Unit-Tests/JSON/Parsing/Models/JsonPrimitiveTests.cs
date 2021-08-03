@@ -60,6 +60,14 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         }
 
         [Test]
+        public void TokenType_ReturnsPrimitiveType()
+        {
+            var type = _jsonPrimitive.TokenType;
+
+            Assert.AreEqual(JsonTokenType.PRIMITIVE, type);
+        }
+
+        [Test]
         public void Parent_HasNoParent_ReturnsNull()
         {
             Assert.IsNull(_jsonPrimitive.Parent);
@@ -95,25 +103,25 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         {
             var jsonPrimitive = tester.JsonPrimitive;
             var expectedParent = tester.Parent;
-            var expectedType = tester.Type;
+            var expectedValueType = tester.ValueType;
 
             Assert.AreEqual(expectedParent, jsonPrimitive.Parent);
 
-            Assert.AreEqual(expectedType, jsonPrimitive.Type);
+            Assert.AreEqual(expectedValueType, jsonPrimitive.ValueType);
 
-            Assert.AreEqual(expectedType == JsonPrimitiveType.NULL, jsonPrimitive.IsNull);
-            Assert.AreEqual(expectedType == JsonPrimitiveType.STRING, jsonPrimitive.IsString);
-            Assert.AreEqual(expectedType == JsonPrimitiveType.DOUBLE, jsonPrimitive.IsDouble);
-            Assert.AreEqual(expectedType == JsonPrimitiveType.INTEGER, jsonPrimitive.IsInteger);
-            Assert.AreEqual(expectedType == JsonPrimitiveType.BOOLEAN, jsonPrimitive.IsBoolean);
-            Assert.AreEqual(expectedType == JsonPrimitiveType.DATE_TIME, jsonPrimitive.IsDateTime);
+            Assert.AreEqual(expectedValueType == JsonPrimitiveType.NULL, jsonPrimitive.IsNull);
+            Assert.AreEqual(expectedValueType == JsonPrimitiveType.STRING, jsonPrimitive.IsString);
+            Assert.AreEqual(expectedValueType == JsonPrimitiveType.DOUBLE, jsonPrimitive.IsDouble);
+            Assert.AreEqual(expectedValueType == JsonPrimitiveType.INTEGER, jsonPrimitive.IsInteger);
+            Assert.AreEqual(expectedValueType == JsonPrimitiveType.BOOLEAN, jsonPrimitive.IsBoolean);
+            Assert.AreEqual(expectedValueType == JsonPrimitiveType.DATE_TIME, jsonPrimitive.IsDateTime);
 
             Assert.IsNull(jsonPrimitive.AsNull());
-            if (expectedType == JsonPrimitiveType.STRING) Assert.AreEqual(jsonPrimitive.Value, jsonPrimitive.AsString()); else Assert.IsNull(jsonPrimitive.AsString());
-            if (expectedType == JsonPrimitiveType.DOUBLE) Assert.AreEqual(jsonPrimitive.Value, jsonPrimitive.AsDouble()); else Assert.IsNull(jsonPrimitive.AsDouble());
-            if (expectedType == JsonPrimitiveType.INTEGER) Assert.AreEqual(jsonPrimitive.Value, jsonPrimitive.AsInteger()); else Assert.IsNull(jsonPrimitive.AsInteger());
-            if (expectedType == JsonPrimitiveType.BOOLEAN) Assert.AreEqual(jsonPrimitive.Value, jsonPrimitive.AsBoolean()); else Assert.IsNull(jsonPrimitive.AsBoolean());
-            if (expectedType == JsonPrimitiveType.DATE_TIME) Assert.AreEqual(jsonPrimitive.Value, jsonPrimitive.AsDateTime()); else Assert.IsNull(jsonPrimitive.AsDateTime());
+            if (expectedValueType == JsonPrimitiveType.STRING) Assert.AreEqual(jsonPrimitive.Value, jsonPrimitive.AsString()); else Assert.IsNull(jsonPrimitive.AsString());
+            if (expectedValueType == JsonPrimitiveType.DOUBLE) Assert.AreEqual(jsonPrimitive.Value, jsonPrimitive.AsDouble()); else Assert.IsNull(jsonPrimitive.AsDouble());
+            if (expectedValueType == JsonPrimitiveType.INTEGER) Assert.AreEqual(jsonPrimitive.Value, jsonPrimitive.AsInteger()); else Assert.IsNull(jsonPrimitive.AsInteger());
+            if (expectedValueType == JsonPrimitiveType.BOOLEAN) Assert.AreEqual(jsonPrimitive.Value, jsonPrimitive.AsBoolean()); else Assert.IsNull(jsonPrimitive.AsBoolean());
+            if (expectedValueType == JsonPrimitiveType.DATE_TIME) Assert.AreEqual(jsonPrimitive.Value, jsonPrimitive.AsDateTime()); else Assert.IsNull(jsonPrimitive.AsDateTime());
         }
 
         class JsonPrimitiveTestBundleSource : IEnumerable
@@ -138,7 +146,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
 
         public record JsonPrimitiveTestBundle(
             JsonPrimitive JsonPrimitive,
-            JsonPrimitiveType Type = JsonPrimitiveType.NULL,
+            JsonPrimitiveType ValueType = JsonPrimitiveType.NULL,
             JsonToken Parent = null);
     }
 }

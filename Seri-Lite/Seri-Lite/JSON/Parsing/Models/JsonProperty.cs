@@ -1,6 +1,6 @@
 ﻿namespace Seri_Lite.JSON.Parsing.Models
 {
-    public class JsonProperty : JsonToken
+    public class JsonProperty
     {
         public string Name { get; }
         public JsonToken Value { get; }

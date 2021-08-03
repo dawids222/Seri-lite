@@ -5,7 +5,9 @@ namespace Seri_Lite.JSON.Parsing.Models
 {
     public class JsonPrimitive : JsonToken
     {
-        private readonly JsonPrimitiveType _type;
+        public override JsonTokenType TokenType => JsonTokenType.PRIMITIVE;
+
+        private readonly JsonPrimitiveType _valueType;
         private readonly object _value;
 
         public JsonPrimitive() : this(null, null) { }
@@ -24,23 +26,23 @@ namespace Seri_Lite.JSON.Parsing.Models
         private JsonPrimitive(JsonToken parent, object value) : base(parent)
         {
             _value = value;
-            if (value is null) { _type = JsonPrimitiveType.NULL; }
-            if (value is string) { _type = JsonPrimitiveType.STRING; }
-            if (value is double) { _type = JsonPrimitiveType.DOUBLE; }
-            if (value is int) { _type = JsonPrimitiveType.INTEGER; }
-            if (value is bool) { _type = JsonPrimitiveType.BOOLEAN; }
-            if (value is DateTime) { _type = JsonPrimitiveType.DATE_TIME; }
+            if (value is null) { _valueType = JsonPrimitiveType.NULL; }
+            if (value is string) { _valueType = JsonPrimitiveType.STRING; }
+            if (value is double) { _valueType = JsonPrimitiveType.DOUBLE; }
+            if (value is int) { _valueType = JsonPrimitiveType.INTEGER; }
+            if (value is bool) { _valueType = JsonPrimitiveType.BOOLEAN; }
+            if (value is DateTime) { _valueType = JsonPrimitiveType.DATE_TIME; }
         }
 
-        public JsonPrimitiveType Type => _type;
+        public JsonPrimitiveType ValueType => _valueType;
         public object Value => _value;
 
-        public bool IsNull => _type == JsonPrimitiveType.NULL;
-        public bool IsString => _type == JsonPrimitiveType.STRING;
-        public bool IsDouble => _type == JsonPrimitiveType.DOUBLE;
-        public bool IsInteger => _type == JsonPrimitiveType.INTEGER;
-        public bool IsBoolean => _type == JsonPrimitiveType.BOOLEAN;
-        public bool IsDateTime => _type == JsonPrimitiveType.DATE_TIME;
+        public bool IsNull => _valueType == JsonPrimitiveType.NULL;
+        public bool IsString => _valueType == JsonPrimitiveType.STRING;
+        public bool IsDouble => _valueType == JsonPrimitiveType.DOUBLE;
+        public bool IsInteger => _valueType == JsonPrimitiveType.INTEGER;
+        public bool IsBoolean => _valueType == JsonPrimitiveType.BOOLEAN;
+        public bool IsDateTime => _valueType == JsonPrimitiveType.DATE_TIME;
 
         public object AsNull() => null;
         public string AsString() => _value as string;

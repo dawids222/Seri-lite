@@ -1,4 +1,5 @@
-﻿using Seri_Lite.JSON.Parsing.Exceptions;
+﻿using Seri_Lite.JSON.Parsing.Enums;
+using Seri_Lite.JSON.Parsing.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -6,6 +7,8 @@ namespace Seri_Lite.JSON.Parsing.Models
 {
     public class JsonObject : JsonToken
     {
+        public override JsonTokenType TokenType => JsonTokenType.OBJECT;
+
         private readonly Dictionary<string, JsonProperty> _properties = new();
 
         public JsonObject() : base() { }
