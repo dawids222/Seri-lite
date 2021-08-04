@@ -28,13 +28,13 @@ namespace Seri_Lite.JSON.Parsing.Models
         public bool HasMixedTokens => !IsEmpty && GetTokens().Select(t => t.TokenType).Distinct().Count() > 1;
 
         public IEnumerable<JsonToken> GetTokens() => _tokens;
-        public IEnumerable<JsonObject> GetObjects() => _tokens.Cast<JsonObject>();
-        public IEnumerable<JsonArray> GetArrays() => _tokens.Cast<JsonArray>();
-        public IEnumerable<JsonPrimitive> GetPrimitives() => _tokens.Cast<JsonPrimitive>();
+        public IEnumerable<JsonObject> GetObjects() => _tokens.Where(t => t.IsObject).Cast<JsonObject>();
+        public IEnumerable<JsonArray> GetArrays() => _tokens.Where(t => t.IsArray).Cast<JsonArray>();
+        public IEnumerable<JsonPrimitive> GetPrimitives() => _tokens.Where(t => t.IsPrimitive).Cast<JsonPrimitive>();
 
         public JsonToken GetToken(int index) => GetTokens().ElementAt(index);
-        public JsonObject GetObject(int index) => GetObjects().ElementAt(index);
-        public JsonArray GetArray(int index) => GetArrays().ElementAt(index);
-        public JsonPrimitive GetPrimitive(int index) => GetPrimitives().ElementAt(index);
+        public JsonObject GetObject(int index) => GetToken(index).AsObject();
+        public JsonArray GetArray(int index) => GetToken(index).AsArray();
+        public JsonPrimitive GetPrimitive(int index) => GetToken(index).AsPrimitive();
     }
 }

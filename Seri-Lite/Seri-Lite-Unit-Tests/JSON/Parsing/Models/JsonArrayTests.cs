@@ -3,6 +3,7 @@ using Seri_Lite.JSON.Parsing.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
 {
@@ -151,5 +152,78 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
             bool Arrays = false,
             bool Primitives = false,
             bool Mixed = false);
+
+        [TestCaseSource(typeof(GetMultipleTestBundleSource))]
+        public void GetMultiple_ReturnsValueDependentOnTheSituation(GetMultipleTestBundle bundle)
+        {
+            var tokens = bundle.Tokens;
+            _jsonArray = new JsonArray(tokens);
+
+            Assert.AreEqual(tokens, _jsonArray.GetTokens());
+            Assert.AreEqual(bundle.Expected.Objects, _jsonArray.GetObjects().Count());
+            Assert.AreEqual(bundle.Expected.Arrays, _jsonArray.GetArrays().Count());
+            Assert.AreEqual(bundle.Expected.Primitives, _jsonArray.GetPrimitives().Count());
+        }
+
+        public class GetMultipleTestBundleSource : IEnumerable
+        {
+            public IEnumerator GetEnumerator()
+            {
+                yield return new GetMultipleTestBundle(
+                    Array.Empty<JsonToken>(),
+                    new GetMultipleTest());
+                yield return new GetMultipleTestBundle(
+                    new JsonToken[] { new JsonObject() },
+                    new GetMultipleTest(Objects: 1));
+                yield return new GetMultipleTestBundle(
+                    new JsonToken[] { new JsonArray() },
+                    new GetMultipleTest(Arrays: 1));
+                yield return new GetMultipleTestBundle(
+                    new JsonToken[] { new JsonPrimitive() },
+                    new GetMultipleTest(Primitives: 1));
+                yield return new GetMultipleTestBundle(
+                    new JsonToken[]
+                    {
+                        new JsonObject(),
+                        new JsonArray(),
+                        new JsonArray(),
+                        new JsonPrimitive(),
+                        new JsonPrimitive(),
+                        new JsonPrimitive(),
+                    },
+                    new GetMultipleTest(Objects: 1, Arrays: 2, Primitives: 3));
+            }
+        }
+
+        public record GetMultipleTestBundle(
+            IEnumerable<JsonToken> Tokens,
+            GetMultipleTest Expected);
+
+        public record GetMultipleTest(
+            int Objects = 0,
+            int Arrays = 0,
+            int Primitives = 0);
+
+        [Test]
+        public void GetSingle_ReturnsValueDependentOnTheSituation()
+        {
+            var tokens = new JsonToken[] { new JsonObject(), new JsonArray(), new JsonPrimitive() };
+            _jsonArray = new JsonArray(tokens);
+
+            Assert.AreEqual(tokens.ElementAt(0), _jsonArray.GetToken(0));
+            Assert.AreEqual(tokens.ElementAt(0), _jsonArray.GetObject(0));
+            Assert.AreEqual(null, _jsonArray.GetArray(0));
+            Assert.AreEqual(null, _jsonArray.GetPrimitive(0));
+
+            Assert.AreEqual(tokens.ElementAt(1), _jsonArray.GetToken(1));
+            Assert.AreEqual(null, _jsonArray.GetObject(1));
+            Assert.AreEqual(tokens.ElementAt(1), _jsonArray.GetArray(1));
+            Assert.AreEqual(null, _jsonArray.GetPrimitive(1));
+
+            Assert.AreEqual(tokens.ElementAt(2), _jsonArray.GetToken(2));
+            Assert.AreEqual(null, _jsonArray.GetObject(2));
+            Assert.AreEqual(null, _jsonArray.GetArray(2));
+            Assert.AreEqual(tokens.ElementAt(2), _jsonArray.GetPrimitive(2));
+        }
     }
 }
