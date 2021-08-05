@@ -117,6 +117,9 @@ namespace Seri_Lite_Unit_Tests.JSON
                 yield return new { Person = (object)null };
                 yield return new object[] { new { Name = "Test1", Surname = "Test2" }, new { Name = "Test3", Surname = "Test4" } };
                 yield return new { Person = new { Name = "Test1", Age = 18, Height = 180.5, Married = false, Address = new { City = "Test2", Street = "Test3" }, Pets = new object[] { new { Name = "Test4", Species = "Test5" }, new { Name = "Test6", Species = "Test7" }, }, }, };
+                yield return "va\"lue";
+                yield return "va\"\"lue";
+                yield return "va\\\"lue";
             }
         }
     }

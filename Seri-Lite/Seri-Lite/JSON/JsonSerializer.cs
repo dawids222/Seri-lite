@@ -37,7 +37,14 @@ namespace Seri_Lite.JSON
         {
             if (value is null) return "null";
             if (value is int) { return value.ToString(); }
-            if (value is string) { return $"\"{value}\""; }
+            if (value is string)
+            {
+                value = value
+                    .ToString()
+                    .Replace("\\", "\\\\")
+                    .Replace("\"", "\\\"");
+                return $"\"{value}\"";
+            }
 
             var stringBuilder = new StringBuilder();
 
