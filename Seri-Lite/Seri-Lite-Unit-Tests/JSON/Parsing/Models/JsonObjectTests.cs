@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using Seri_Lite.JSON.Parsing.Enums;
-using Seri_Lite.JSON.Parsing.Exceptions;
 using Seri_Lite.JSON.Parsing.Models;
 using System.Linq;
 
@@ -148,61 +147,10 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         }
 
         [Test]
-        public void AddProperty_IsUnique_AddsProperty()
-        {
-            var property = new JsonProperty("Name", new JsonObject());
-
-            _jsonObject.AddProperty(property);
-
-            Assert.AreEqual(1, _jsonObject.GetProperties().Count());
-            Assert.AreEqual(property, _jsonObject.GetProperties().ElementAt(0));
-        }
-
-        [Test]
-        public void AddProperty_IsNotUnique_ThrowsPropertyAlreadyExistsException()
-        {
-            var property = new JsonProperty("Name", new JsonObject());
-            _jsonObject.AddProperty(property);
-
-            void act() => _jsonObject.AddProperty(property);
-
-            Assert.Throws<PropertyAlreadyExistsException>(act);
-        }
-
-        [Test]
-        public void AddProperties_IsUnique_AddsProperties()
-        {
-            var properties = new JsonProperty[]
-            {
-                new JsonProperty("Name", new JsonObject()),
-                new JsonProperty("Surname", new JsonObject()),
-            };
-
-            _jsonObject.AddProperties(properties);
-
-            CollectionAssert.AreEqual(properties, _jsonObject.GetProperties());
-        }
-
-        [Test]
-        public void AddProperties_IsNotUnique_ThrowsPropertyAlreadyExistsException()
-        {
-            var properties = new JsonProperty[]
-            {
-                new JsonProperty("Name", new JsonObject()),
-                new JsonProperty("Name", new JsonObject()),
-            };
-
-            void act() => _jsonObject.AddProperties(properties);
-
-            Assert.Throws<PropertyAlreadyExistsException>(act);
-        }
-
-        [Test]
         public void PropertyExists_Exists_ReturnsTrue()
         {
-            var property = new JsonProperty("Name", new JsonObject());
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", new JsonObject()) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.IsTrue(_jsonObject.PropertyExists("Name"));
         }
@@ -216,11 +164,10 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         [Test]
         public void GetProperty_Exists_ReturnsProperty()
         {
-            var property = new JsonProperty("Name", new JsonObject());
+            var properties = new JsonProperty[] { new JsonProperty("Name", new JsonObject()) };
+            _jsonObject = new JsonObject(properties);
 
-            _jsonObject.AddProperty(property);
-
-            Assert.AreEqual(property, _jsonObject.GetProperty("Name"));
+            Assert.AreEqual(properties[0], _jsonObject.GetProperty("Name"));
         }
 
         [Test]
@@ -233,9 +180,8 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         public void GetToken_Exists_ReturnsJsonToken()
         {
             var token = new JsonObject();
-            var property = new JsonProperty("Name", token);
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", token) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.AreEqual(token, _jsonObject.GetToken("Name"));
         }
@@ -250,9 +196,8 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         public void GetObject_ExistsAndIsAnObject_ReturnsJsonObject()
         {
             var token = new JsonObject();
-            var property = new JsonProperty("Name", token);
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", token) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.AreEqual(token, _jsonObject.GetObject("Name"));
         }
@@ -261,9 +206,8 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         public void GetObject_ExistsAndIsAnArray_ReturnsNull()
         {
             var token = new JsonArray();
-            var property = new JsonProperty("Name", token);
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", token) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.IsNull(_jsonObject.GetObject("Name"));
         }
@@ -272,9 +216,8 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         public void GetObject_ExistsAndIsAPrimitive_ReturnsNull()
         {
             var token = new JsonPrimitive();
-            var property = new JsonProperty("Name", token);
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", token) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.IsNull(_jsonObject.GetObject("Name"));
         }
@@ -283,9 +226,8 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         public void GetArray_ExistsAndIsAnObject_ReturnsNull()
         {
             var token = new JsonObject();
-            var property = new JsonProperty("Name", token);
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", token) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.IsNull(_jsonObject.GetArray("Name"));
         }
@@ -294,9 +236,8 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         public void GetArray_ExistsAndIsAnArray_ReturnsJsonArray()
         {
             var token = new JsonArray();
-            var property = new JsonProperty("Name", token);
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", token) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.AreEqual(token, _jsonObject.GetArray("Name"));
         }
@@ -305,9 +246,8 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         public void GetArray_ExistsAndIsAPrimitive_ReturnsNull()
         {
             var token = new JsonPrimitive();
-            var property = new JsonProperty("Name", token);
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", token) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.IsNull(_jsonObject.GetArray("Name"));
         }
@@ -316,9 +256,8 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         public void GetPrimitive_ExistsAndIsAnObject_ReturnsNull()
         {
             var token = new JsonObject();
-            var property = new JsonProperty("Name", token);
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", token) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.IsNull(_jsonObject.GetPrimitive("Name"));
         }
@@ -327,9 +266,8 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         public void GetPrimitive_ExistsAndIsAnArray_ReturnsNull()
         {
             var token = new JsonArray();
-            var property = new JsonProperty("Name", token);
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", token) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.IsNull(_jsonObject.GetPrimitive("Name"));
         }
@@ -338,11 +276,60 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         public void GetPrimitive_ExistsAndIsAPrimitive_ReturnsJsonPrimitive()
         {
             var token = new JsonPrimitive();
-            var property = new JsonProperty("Name", token);
-
-            _jsonObject.AddProperty(property);
+            var properties = new JsonProperty[] { new JsonProperty("Name", token) };
+            _jsonObject = new JsonObject(properties);
 
             Assert.AreEqual(token, _jsonObject.GetPrimitive("Name"));
         }
+
+        //[Test]
+        //public void AddProperty_IsUnique_AddsProperty()
+        //{
+        //    var property = new JsonProperty("Name", new JsonObject());
+
+        //    _jsonObject.AddProperty(property);
+
+        //    Assert.AreEqual(1, _jsonObject.GetProperties().Count());
+        //    Assert.AreEqual(property, _jsonObject.GetProperties().ElementAt(0));
+        //}
+
+        //[Test]
+        //public void AddProperty_IsNotUnique_ThrowsPropertyAlreadyExistsException()
+        //{
+        //    var property = new JsonProperty("Name", new JsonObject());
+        //    _jsonObject.AddProperty(property);
+
+        //    void act() => _jsonObject.AddProperty(property);
+
+        //    Assert.Throws<PropertyAlreadyExistsException>(act);
+        //}
+
+        //[Test]
+        //public void AddProperties_IsUnique_AddsProperties()
+        //{
+        //    var properties = new JsonProperty[]
+        //    {
+        //        new JsonProperty("Name", new JsonObject()),
+        //        new JsonProperty("Surname", new JsonObject()),
+        //    };
+
+        //    _jsonObject.AddProperties(properties);
+
+        //    CollectionAssert.AreEqual(properties, _jsonObject.GetProperties());
+        //}
+
+        //[Test]
+        //public void AddProperties_IsNotUnique_ThrowsPropertyAlreadyExistsException()
+        //{
+        //    var properties = new JsonProperty[]
+        //    {
+        //        new JsonProperty("Name", new JsonObject()),
+        //        new JsonProperty("Name", new JsonObject()),
+        //    };
+
+        //    void act() => _jsonObject.AddProperties(properties);
+
+        //    Assert.Throws<PropertyAlreadyExistsException>(act);
+        //}
     }
 }

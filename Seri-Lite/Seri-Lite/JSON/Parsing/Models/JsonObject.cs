@@ -22,24 +22,20 @@ namespace Seri_Lite.JSON.Parsing.Models
         public IEnumerable<JsonProperty> GetProperties() => _properties.Values;
 
         public JsonProperty GetProperty(string name) => PropertyExists(name) ? _properties[name] : null;
-
         public JsonToken GetToken(string name) => GetProperty(name)?.Value;
-
         public JsonObject GetObject(string name) => GetToken(name)?.AsObject();
-
         public JsonArray GetArray(string name) => GetToken(name)?.AsArray();
-
         public JsonPrimitive GetPrimitive(string name) => GetToken(name)?.AsPrimitive();
 
         public bool PropertyExists(string name) => _properties.ContainsKey(name);
 
-        public void AddProperty(JsonProperty property)
+        internal void AddProperty(JsonProperty property)
         {
             try { _properties.Add(property.Name, property); }
             catch (ArgumentException) { throw new PropertyAlreadyExistsException(); }
         }
 
-        public void AddProperties(IEnumerable<JsonProperty> properties)
+        internal void AddProperties(IEnumerable<JsonProperty> properties)
         {
             foreach (var property in properties) AddProperty(property);
         }
