@@ -21,7 +21,7 @@ namespace Seri_Lite.JSON.Parsing.Models
 
         public IEnumerable<JsonProperty> GetProperties() => _properties.Values;
 
-        public JsonProperty GetProperty(string name) => CheckIfPropertyExists(name) ? _properties[name] : null;
+        public JsonProperty GetProperty(string name) => PropertyExists(name) ? _properties[name] : null;
 
         public JsonToken GetToken(string name) => GetProperty(name)?.Value;
 
@@ -31,7 +31,7 @@ namespace Seri_Lite.JSON.Parsing.Models
 
         public JsonPrimitive GetPrimitive(string name) => GetToken(name)?.AsPrimitive();
 
-        public bool CheckIfPropertyExists(string name) => _properties.ContainsKey(name);
+        public bool PropertyExists(string name) => _properties.ContainsKey(name);
 
         public void AddProperty(JsonProperty property)
         {
@@ -41,8 +41,7 @@ namespace Seri_Lite.JSON.Parsing.Models
 
         public void AddProperties(IEnumerable<JsonProperty> properties)
         {
-            foreach (var property in properties)
-                AddProperty(property);
+            foreach (var property in properties) AddProperty(property);
         }
     }
 }

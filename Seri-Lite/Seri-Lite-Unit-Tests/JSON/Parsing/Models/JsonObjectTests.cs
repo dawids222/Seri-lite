@@ -198,19 +198,19 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
         }
 
         [Test]
-        public void CheckIfPropertyExists_Exists_ReturnsTrue()
+        public void PropertyExists_Exists_ReturnsTrue()
         {
             var property = new JsonProperty("Name", new JsonObject());
 
             _jsonObject.AddProperty(property);
 
-            Assert.IsTrue(_jsonObject.CheckIfPropertyExists("Name"));
+            Assert.IsTrue(_jsonObject.PropertyExists("Name"));
         }
 
         [Test]
-        public void CheckIfPropertyExists_DoesNotExist_ReturnsFalse()
+        public void PropertyExists_DoesNotExist_ReturnsFalse()
         {
-            Assert.IsFalse(_jsonObject.CheckIfPropertyExists("Name"));
+            Assert.IsFalse(_jsonObject.PropertyExists("Name"));
         }
 
         [Test]
