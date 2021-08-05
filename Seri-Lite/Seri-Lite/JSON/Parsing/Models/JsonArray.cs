@@ -16,7 +16,7 @@ namespace Seri_Lite.JSON.Parsing.Models
         public JsonArray(IEnumerable<JsonToken> tokens) : this(null, tokens) { }
         public JsonArray(JsonToken parent, IEnumerable<JsonToken> tokens) : base(parent)
         {
-            _tokens.AddRange(tokens);
+            AddTokens(tokens);
         }
 
         public int Count => _tokens.Count;
@@ -36,5 +36,8 @@ namespace Seri_Lite.JSON.Parsing.Models
         public JsonObject GetObject(int index) => GetToken(index).AsObject();
         public JsonArray GetArray(int index) => GetToken(index).AsArray();
         public JsonPrimitive GetPrimitive(int index) => GetToken(index).AsPrimitive();
+
+        internal void AddToken(JsonToken token) => _tokens.Add(token);
+        internal void AddTokens(IEnumerable<JsonToken> tokens) => _tokens.AddRange(tokens);
     }
 }
