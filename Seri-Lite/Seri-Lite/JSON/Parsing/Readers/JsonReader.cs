@@ -1,13 +1,27 @@
 ﻿using Seri_Lite.JSON.Parsing.Exceptions;
 using Seri_Lite.JSON.Parsing.Models;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Seri_Lite.JSON.Parsing.Readers
 {
     public class JsonReader : IJsonReader
     {
+        public bool TryRead(string value, out JsonToken result)
+        {
+            try
+            {
+                result = Read(value);
+                return true;
+            }
+            catch (Exception)
+            {
+                result = null;
+                return false;
+            }
+        }
+
         public JsonToken Read(string value)
         {
             value = Sanitize(value);
@@ -40,7 +54,9 @@ namespace Seri_Lite.JSON.Parsing.Readers
             foreach (var s in splited)
             {
                 var name = GetSubstringBetweenClosest(s, '"');
-                var token = InnerRead(s[(s.IndexOf(':') + 1)..], result);
+                var colonIndex = s.IndexOf(':');
+                if (colonIndex == -1) { throw new JsonReadingException(value); }
+                var token = InnerRead(s[(colonIndex + 1)..], result);
                 properties.Add(new JsonProperty(name, token));
             }
             result.AddProperties(properties);
@@ -72,12 +88,12 @@ namespace Seri_Lite.JSON.Parsing.Readers
         }
 
         private static bool IsNull(string value) => value.ToLower() == "null";
-        private static bool IsString(string value) => value.Count(c => c == '"') == 2 && value.StartsWith('"') && value.EndsWith('"');
+        private static bool IsString(string value) => ContainsTwoUnescapedQuotationMarks(value) && value.StartsWith('"') && value.EndsWith('"');
         private static bool IsDouble(string value) => (value.Contains('.') || value.Contains(',')) && double.TryParse(value.Replace('.', ','), out var _);
         private static bool IsInteger(string value) => int.TryParse(value, out var _);
         private static bool IsBoolean(string value) => bool.TryParse(value, out var _);
 
-        private static string GetString(string value) => GetSubstringBetweenClosest(value, '"');
+        private static string GetString(string value) => GetSubstringBetweenFurtherest(value, '"').Replace(@"\\", @"\").Replace(@"\""", @"""");
         private static double GetDouble(string value) => double.Parse(value.Replace('.', ','));
         private static int GetInteger(string value) => int.Parse(value);
         private static bool GetBoolean(string value) => bool.Parse(value);
@@ -93,5 +109,7 @@ namespace Seri_Lite.JSON.Parsing.Readers
 
         private static string GetSubstringBetweenFurtherest(string value, char start, char end)
             => Regex.Match(value, $@"\{start}(.*[^{end}]*)\{end}").Groups[1].Value;
+
+        private static bool ContainsTwoUnescapedQuotationMarks(string value) => Regex.Matches(value, @"(?<!\\)\""").Count == 2;
     }
 }

@@ -177,16 +177,16 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         [Test]
         public void Read12_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
-            var obj = "va\"lue";
+            var obj = @"va\""lue";
             var value = _serializer.Serialize(obj);
 
             var token = _reader.Read(value);
 
-            Assert.AreEqual(value, token.AsPrimitive().AsString());
+            Assert.AreEqual(obj, token.AsPrimitive().AsString());
         }
 
         [TestCaseSource(typeof(InvalidJsonSource))]
-        public void Read_InvalidValue_ReturnsJsonObject(string value)
+        public void Read_InvalidValue_Throws(string value)
         {
             void act() => _reader.Read(value);
 
@@ -198,20 +198,44 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
             public IEnumerator GetEnumerator()
             {
                 yield return "'John'"; // Wrong quotes
-                yield return "\"John says \"Hello!\"\" - \""; // TODO: investigate // Inside the string must use escape sequence \"
+                yield return "\"John says \"Hello!\"\" - \""; // Inside the string must use escape sequence \"
                 yield return "[\"Hello\", 3.14, true, ]"; // Extra comma (,) in array
                 yield return "[\"Hello\", 3.14, , true]"; // Extra comma (,) in array
                 yield return "[\"Hello\", 3.14, true}"; // Closing bracket is wrong
-                yield return "[\"Hello\", 3.14, true, \"name\": \"Joe\"]"; // TODO: investigate // Name value pair not allowed in array              
+                yield return "[\"Hello\", 3.14, true, \"name\": \"Joe\"]"; // Name value pair not allowed in array              
                 yield return "{\"name\": \"Joe\", \"age\": null, }"; // Extra comma (,) in object
                 yield return "{\"name\": \"Joe\", , \"age\": null}"; // Extra comma (,) in object
                 yield return "{\"name\": \"Joe\", \"age\": null]"; // Closing bracket is wrong
                 yield return "{\"name\": \"Joe\", \"age\": }"; // Missing value in name value pair in object
-                yield return "{\"name\": \"Joe\", \"age\" }"; // TODO: investigate // Missing : after name in object
+                yield return "{\"name\": \"Joe\", \"age\" }"; // Missing : after name in object
                 yield return "{{}}"; // Missing name in object
                 yield return "$1.00"; // Currency sign is now allowed in numbers
                 yield return "99.00 * 0.15"; // Expression is not allowed in numbers
             }
+        }
+
+        [Test]
+        public void TryRead_Valid_ReturnsTrueAndJsonToken()
+        {
+            var obj = new { Value = "value" };
+            var value = _serializer.Serialize(obj);
+
+            var result = _reader.TryRead(value, out var token);
+
+            Assert.IsTrue(result);
+            Assert.IsTrue(token.IsObject);
+        }
+
+        [Test]
+        public void TryRead_Invalid_ReturnsFalseAndNull()
+        {
+            var obj = new { Value = "va\"lue" };
+            var value = _serializer.Serialize(obj);
+
+            var result = _reader.TryRead(value, out var token);
+
+            Assert.IsFalse(result);
+            Assert.IsNull(token);
         }
     }
 }
