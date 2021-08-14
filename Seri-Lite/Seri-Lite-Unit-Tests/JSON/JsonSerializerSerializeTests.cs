@@ -1,6 +1,8 @@
-﻿using NUnit.Framework;
+﻿using Moq;
+using NUnit.Framework;
 using Seri_Lite.JSON;
 using Seri_Lite.JSON.Enums;
+using Seri_Lite.JSON.Parsing.Readers;
 using Seri_Lite.JSON.Serialization.Property;
 using System;
 using System.Collections;
@@ -8,13 +10,17 @@ using System.Collections;
 namespace Seri_Lite_Unit_Tests.JSON
 {
     [TestFixture]
-    public class JsonSerializerTests
+    public class JsonSerializerSerializeTests
     {
+        private Mock<IJsonReader> _jsonReaderMock;
+
         private JsonSerializer _serializer;
 
         [SetUp]
         public void SetUp()
         {
+            _jsonReaderMock = new Mock<IJsonReader>();
+
             _serializer = new JsonSerializer();
         }
 
@@ -32,7 +38,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         public void Serialize_PropertyNameCamelCase_ReturnsSameValueAsNewtonsoftJsonConvert(object value)
         {
             var propertyNameResolver = new CamelCasePropertyNameResolver();
-            _serializer = new JsonSerializer(NullPropertyBehaviour.SERIALIZE, propertyNameResolver);
+            _serializer = new JsonSerializer(NullPropertyBehaviour.SERIALIZE, _jsonReaderMock.Object, propertyNameResolver);
             var settings = new Newtonsoft.Json.JsonSerializerSettings
             {
                 ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
@@ -51,7 +57,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         public void Serialize_NullValueIgnore_ReturnsSameValueAsNewtonsoftJsonConvert(object value)
         {
             var propertyNameResolver = new InheritCasePropertyNameResolver();
-            _serializer = new JsonSerializer(NullPropertyBehaviour.IGNORE, propertyNameResolver);
+            _serializer = new JsonSerializer(NullPropertyBehaviour.IGNORE, _jsonReaderMock.Object, propertyNameResolver);
             var settings = new Newtonsoft.Json.JsonSerializerSettings
             {
                 NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore,
@@ -76,7 +82,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         [Test]
         public void Constructor_NullPropertyNameResolver_Throws()
         {
-            static void act() => new JsonSerializer(NullPropertyBehaviour.SERIALIZE, null);
+            void act() => new JsonSerializer(NullPropertyBehaviour.SERIALIZE, _jsonReaderMock.Object, null);
 
             Assert.Throws<ArgumentNullException>(act);
         }
@@ -115,6 +121,8 @@ namespace Seri_Lite_Unit_Tests.JSON
                 yield return new string[][] { new string[] { "Test1", "Test2" }, new string[] { "Test3", "Test4" } };
                 yield return new object[] { "Test", 1, 1.55, true };
                 yield return new { Person = (object)null };
+                yield return new { Name = (string)null };
+                yield return new { People = (ICollection)null };
                 yield return new object[] { new { Name = "Test1", Surname = "Test2" }, new { Name = "Test3", Surname = "Test4" } };
                 yield return new { Person = new { Name = "Test1", Age = 18, Height = 180.5, Married = false, Address = new { City = "Test2", Street = "Test3" }, Pets = new object[] { new { Name = "Test4", Species = "Test5" }, new { Name = "Test6", Species = "Test7" }, }, }, };
                 yield return "va\"lue";

@@ -1,15 +1,20 @@
 ﻿using Seri_Lite.JSON.Enums;
+using Seri_Lite.JSON.Parsing.Models;
+using Seri_Lite.JSON.Parsing.Readers;
 using Seri_Lite.JSON.Serialization.Property;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 
 namespace Seri_Lite.JSON
 {
+    // TODO: saparate code into at least 2 files
     public class JsonSerializer : ISerializer
     {
+        private readonly IJsonReader _jsonReader;
         private readonly NullPropertyBehaviour _nullPropertyBehaviour;
         private readonly IPropertyNameResolver _propertyNameResolver;
 
@@ -17,20 +22,83 @@ namespace Seri_Lite.JSON
         {
             _nullPropertyBehaviour = NullPropertyBehaviour.SERIALIZE;
             _propertyNameResolver = new InheritCasePropertyNameResolver();
+            _jsonReader = new JsonReader();
         }
 
         public JsonSerializer(
             NullPropertyBehaviour nullPropertyBehaviour,
+            IJsonReader jsonReader,
             IPropertyNameResolver propertyNameResolver)
         {
             _nullPropertyBehaviour = nullPropertyBehaviour;
+            _jsonReader = jsonReader ??
+                throw new ArgumentNullException(nameof(jsonReader));
             _propertyNameResolver = propertyNameResolver ??
                 throw new ArgumentNullException(nameof(propertyNameResolver));
         }
 
         public T Deserialize<T>(string value)
         {
-            throw new NotImplementedException();
+            var token = _jsonReader.Read(value);
+            return (T)InnerDeserialize(typeof(T), token);
+        }
+
+        public object InnerDeserialize(Type type, JsonToken token)
+        {
+            if (token.IsObject) return DeserializeObject(type, token.AsObject());
+            if (token.IsArray) return DeserializeArray(type, token.AsArray());
+            if (token.IsPrimitive) return DeserializePrimitive(type, token.AsPrimitive());
+            throw new Exception(); // TODO: implement dedicated exception
+        }
+
+        private object DeserializeObject(Type type, JsonObject obj)
+        {
+            var instance = Activator.CreateInstance(type);
+            foreach (var prop in type.GetProperties())
+            {
+                var token = obj.GetToken(prop.Name);
+                object val;
+                if (token is null) { val = null; }
+                else if (token.IsPrimitive) { val = InnerDeserialize(prop.PropertyType, token.AsPrimitive()); }
+                else if (token.IsArray) { val = InnerDeserialize(prop.PropertyType, token.AsArray()); }
+                else { val = InnerDeserialize(prop.PropertyType, token.AsObject()); }
+                prop.SetValue(instance, val);
+            }
+            return instance;
+        }
+
+        private object DeserializeArray(Type type, JsonArray array)
+        {
+            var values = new List<dynamic>();
+            foreach (var token in array.GetTokens())
+            {
+                //var t = type.GetGenericArguments()[0];
+                dynamic val;
+                if (token is null) { val = null; }
+                else if (token.IsPrimitive) { val = InnerDeserialize(null, token.AsPrimitive()); }
+                else if (token.IsArray) { val = InnerDeserialize(null, token.AsArray()); }
+                else { val = InnerDeserialize(null, token.AsObject()); }
+                values.Add((dynamic)val);
+            }
+
+            if (type.IsAssignableTo(typeof(Array)))
+            {
+                return values.ToArray();
+            }
+            else if (type.IsAssignableTo(typeof(ICollection)))
+            {
+                var instance = Activator.CreateInstance(type);
+                var add = type.GetMethod("AddRange");
+                add.Invoke(instance, new object[] { values });
+                return instance;
+            }
+
+            return null; // TODO: throw?
+        }
+
+        private object DeserializePrimitive(Type type, JsonPrimitive primitive)
+        {
+            return primitive.Value;
         }
 
         public string Serialize(object value)
@@ -110,6 +178,7 @@ namespace Seri_Lite.JSON
 
         private static string SerializePrimitive(object value)
         {
+            if (value is null) { return "null"; }
             var type = GetPrimitiveType(value);
             return SerializePrimitive(value, type);
         }
@@ -145,6 +214,8 @@ namespace Seri_Lite.JSON
 
         private string SerializeCollection(object value)
         {
+            if (value is null) { return "null"; }
+
             var collectionValue = (ICollection)value;
             var stringBuilder = new StringBuilder();
 
@@ -183,6 +254,8 @@ namespace Seri_Lite.JSON
             stringBuilder.Append('{');
             foreach (var property in properties)
             {
+                var objectValue = property.GetValue(value);
+                if (ShouldIgnoreProperty(objectValue)) { break; }
                 stringBuilder.Append(Serialize(property, value));
                 if (property != last) { stringBuilder.Append(','); }
             }
