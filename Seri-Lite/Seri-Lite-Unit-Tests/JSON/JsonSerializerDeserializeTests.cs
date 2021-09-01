@@ -66,7 +66,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         }
 
         [Test]
-        public void Deserialize_ListOfPrimitives_ReturnsArray()
+        public void Deserialize_ListOfStrings_ReturnsArray()
         {
             var people = new List<string> { "Chad", "Phill", "Petra" };
             var serialized = _serializer.Serialize(people);
@@ -77,12 +77,66 @@ namespace Seri_Lite_Unit_Tests.JSON
         }
 
         [Test]
-        public void Deserialize_ArrayOfPrimitives_ReturnsArray()
+        public void Deserialize_ListOfDoubles_ReturnsArray()
+        {
+            var numbers = new List<double> { -1, -0.5, 0.0, 1.55, 123.123456789 };
+            var serialized = _serializer.Serialize(numbers);
+
+            var result = _serializer.Deserialize<List<double>>(serialized);
+
+            CollectionAssert.AreEqual(numbers, result);
+        }
+
+        [Test]
+        public void Deserialize_ListOfObjects_ReturnsArray()
+        {
+            var people = new List<SimplePerson>
+            {
+                new SimplePerson() { Name="Chad" },
+                new SimplePerson() { Name="Phill" },
+                new SimplePerson() { Name="Petra" },
+            };
+            var serialized = _serializer.Serialize(people);
+
+            var result = _serializer.Deserialize<List<SimplePerson>>(serialized);
+
+            CollectionAssert.AreEqual(people, result);
+        }
+
+        [Test]
+        public void Deserialize_ArrayOfStrings_ReturnsArray()
         {
             var people = new string[] { "Chad", "Phill", "Petra" };
             var serialized = _serializer.Serialize(people);
 
             var result = _serializer.Deserialize<string[]>(serialized);
+
+            CollectionAssert.AreEqual(people, result);
+        }
+
+        [Test]
+        public void Deserialize_ArrayOfDoubles_ReturnsArray()
+        {
+            var numbers = new double[] { -1, -0.5, 0.0, 1.55, 123.123456789 };
+            var serialized = _serializer.Serialize(numbers);
+
+            var result = _serializer.Deserialize<double[]>(serialized);
+
+            CollectionAssert.AreEqual(numbers, result);
+        }
+
+        [Test]
+        public void Deserialize_ArrayOfObjects_ReturnsArray()
+        {
+            var people = new SimplePerson[]
+            {
+                new SimplePerson() { Name="Chad" },
+                new SimplePerson() { Name="Phill" },
+                new SimplePerson() { Name="Petra" },
+            };
+            var serialized = _serializer.Serialize(people);
+
+            var result = _serializer.Deserialize<SimplePerson[]>(serialized);
 
             CollectionAssert.AreEqual(people, result);
         }

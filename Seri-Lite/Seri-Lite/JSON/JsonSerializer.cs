@@ -70,26 +70,37 @@ namespace Seri_Lite.JSON
         private object DeserializeArray(Type type, JsonArray array)
         {
             var values = new List<dynamic>();
+
             foreach (var token in array.GetTokens())
             {
-                //var t = type.GetGenericArguments()[0];
+                var elementType = type.IsAssignableTo(typeof(Array))
+                    ? type.GetElementType()
+                    : type.GetGenericArguments()[0];
                 dynamic val;
                 if (token is null) { val = null; }
-                else if (token.IsPrimitive) { val = InnerDeserialize(null, token.AsPrimitive()); }
-                else if (token.IsArray) { val = InnerDeserialize(null, token.AsArray()); }
-                else { val = InnerDeserialize(null, token.AsObject()); }
+                else if (token.IsPrimitive) { val = InnerDeserialize(elementType, token.AsPrimitive()); }
+                else if (token.IsArray) { val = InnerDeserialize(elementType, token.AsArray()); }
+                else { val = InnerDeserialize(elementType, token.AsObject()); }
                 values.Add((dynamic)val);
             }
 
             if (type.IsAssignableTo(typeof(Array)))
             {
-                return values.ToArray();
+                var instance = Array.CreateInstance(type.GetElementType(), values.Count);
+                for (var i = 0; i < values.Count; i++)
+                {
+                    instance.SetValue(values[i], i);
+                }
+                return instance;
             }
             else if (type.IsAssignableTo(typeof(ICollection)))
             {
                 var instance = Activator.CreateInstance(type);
-                var add = type.GetMethod("AddRange");
-                add.Invoke(instance, new object[] { values });
+                var add = type.GetMethod("Add");
+                foreach (var value in values)
+                {
+                    add.Invoke(instance, new object[] { value });
+                }
                 return instance;
             }
 
