@@ -5,5 +5,6 @@
         STRING,
         NUMERIC,
         BOOLEAN,
+        DATE_TIME,
     }
 }

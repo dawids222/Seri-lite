@@ -133,6 +133,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 yield return "va\"lue";
                 yield return "va\"\"lue";
                 yield return "va\\\"lue";
+                yield return new DateTime(2021, 9, 2);
             }
         }
     }

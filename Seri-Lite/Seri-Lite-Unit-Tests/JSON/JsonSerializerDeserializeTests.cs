@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Seri_Lite.JSON;
+using Seri_Lite.JSON.Parsing.Models;
 using Seri_Lite_Unit_Tests.JSON.Models;
 using System.Collections;
 using System.Collections.Generic;
@@ -64,6 +65,57 @@ namespace Seri_Lite_Unit_Tests.JSON
             var result = _serializer.Deserialize<IntermediatePerson>(serialized);
 
             Assert.AreEqual(person, result);
+        }
+
+        [Test]
+        public void Deserialize_ObjectToObjectType_ReturnsToken()
+        {
+            var person = new IntermediatePerson
+            {
+                Name = "Howard",
+                Age = 18,
+                Height = 185.5,
+                IsMarried = false,
+                Partner = new SimplePerson { Name = "Sara" },
+            };
+            var serialized = _serializer.Serialize(person);
+
+            var result = _serializer.Deserialize<object>(serialized);
+
+            Assert.That(result, Is.TypeOf<JsonObject>());
+        }
+
+        [Test]
+        public void Deserialize_CollectionToObjectType_ReturnsToken()
+        {
+            var people = new List<string> { "Chad", "Phill", "Petra" };
+            var serialized = _serializer.Serialize(people);
+
+            var result = _serializer.Deserialize<object>(serialized);
+
+            Assert.That(result, Is.TypeOf<JsonArray>());
+        }
+
+        [TestCaseSource(typeof(DeserializationPrimitiveAsObjectSource))]
+        public void Deserialize_PrimitiveToObjectType_ReturnsPrimitive(object value)
+        {
+            var serialized = _serializer.Serialize(value);
+
+            var result = _serializer.Deserialize<object>(serialized);
+
+            Assert.AreEqual(value, result);
+        }
+
+        class DeserializationPrimitiveAsObjectSource : IEnumerable
+        {
+            public IEnumerator GetEnumerator()
+            {
+                yield return 1;
+                yield return 1.1;
+                yield return true;
+                yield return "true";
+                yield return null;
+            }
         }
 
         [TestCaseSource(typeof(DeserializationCollectionSource))]

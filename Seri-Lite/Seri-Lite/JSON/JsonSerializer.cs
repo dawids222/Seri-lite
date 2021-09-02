@@ -43,7 +43,7 @@ namespace Seri_Lite.JSON
             return (T)InnerDeserialize(typeof(T), token);
         }
 
-        public object InnerDeserialize(Type type, JsonToken token)
+        private object InnerDeserialize(Type type, JsonToken token)
         {
             if (token.IsObject) return DeserializeObject(type, token.AsObject());
             if (token.IsArray) return DeserializeArray(type, token.AsArray());
@@ -53,6 +53,8 @@ namespace Seri_Lite.JSON
 
         private object DeserializeObject(Type type, JsonObject obj)
         {
+            if (type == typeof(object)) { return obj; }
+
             var instance = Activator.CreateInstance(type);
             foreach (var prop in type.GetProperties())
             {
@@ -69,6 +71,8 @@ namespace Seri_Lite.JSON
 
         private object DeserializeArray(Type type, JsonArray array)
         {
+            if (type == typeof(object)) { return array; }
+
             var values = new List<dynamic>();
 
             var elementType = type.IsAssignableTo(typeof(Array))
@@ -203,6 +207,7 @@ namespace Seri_Lite.JSON
                 PrimitiveType.STRING => $"\"{value}\"",
                 PrimitiveType.BOOLEAN => value.ToString().ToLower(),
                 PrimitiveType.NUMERIC => value.ToString().Replace(",", "."),
+                PrimitiveType.DATE_TIME => $"\"{DateTime.Parse(value.ToString()).ToString("yyyy-MM-ddTHH:mm:ss")}\"",
                 _ => throw new NotImplementedException(),
             };
         }
@@ -212,6 +217,7 @@ namespace Seri_Lite.JSON
             var type = value.GetType();
             if (type == typeof(String)) { return PrimitiveType.STRING; }
             if (type == typeof(Boolean)) { return PrimitiveType.BOOLEAN; }
+            if (type == typeof(DateTime)) { return PrimitiveType.DATE_TIME; }
             return PrimitiveType.NUMERIC;
         }
 
