@@ -71,11 +71,12 @@ namespace Seri_Lite.JSON
         {
             var values = new List<dynamic>();
 
-            foreach (var token in array.GetTokens())
-            {
-                var elementType = type.IsAssignableTo(typeof(Array))
+            var elementType = type.IsAssignableTo(typeof(Array))
                     ? type.GetElementType()
                     : type.GetGenericArguments()[0];
+
+            foreach (var token in array.GetTokens())
+            {
                 dynamic val;
                 if (token is null) { val = null; }
                 else if (token.IsPrimitive) { val = InnerDeserialize(elementType, token.AsPrimitive()); }
@@ -93,10 +94,11 @@ namespace Seri_Lite.JSON
                 }
                 return instance;
             }
-            else if (type.IsAssignableTo(typeof(ICollection)))
+            else if (type.IsAssignableTo(typeof(IEnumerable)))
             {
                 var instance = Activator.CreateInstance(type);
                 var add = type.GetMethod("Add");
+                if (add is null) { /* TODO: throw an exception? */ }
                 foreach (var value in values)
                 {
                     add.Invoke(instance, new object[] { value });
@@ -177,7 +179,7 @@ namespace Seri_Lite.JSON
                type == typeof(DateTime);
 
         private static bool IsCollection(Type type)
-            => typeof(ICollection).IsAssignableFrom(type);
+            => typeof(IEnumerable).IsAssignableFrom(type);
 
         private string SerializePrimitive(PropertyInfo property, object value)
         {
@@ -215,7 +217,7 @@ namespace Seri_Lite.JSON
 
         private string SerializeCollection(PropertyInfo property, object value)
         {
-            var collectionValue = (ICollection)property.GetValue(value);
+            var collectionValue = (IEnumerable)property.GetValue(value);
             var stringBuilder = new StringBuilder();
             var propertyName = _propertyNameResolver.Resolve(property);
             var serialized = SerializeCollection(collectionValue);
@@ -227,7 +229,7 @@ namespace Seri_Lite.JSON
         {
             if (value is null) { return "null"; }
 
-            var collectionValue = (ICollection)value;
+            var collectionValue = (IEnumerable)value;
             var stringBuilder = new StringBuilder();
 
             var enumerator = collectionValue.GetEnumerator();

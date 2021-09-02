@@ -6,6 +6,7 @@ using Seri_Lite.JSON.Parsing.Readers;
 using Seri_Lite.JSON.Serialization.Property;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Seri_Lite_Unit_Tests.JSON
 {
@@ -116,6 +117,10 @@ namespace Seri_Lite_Unit_Tests.JSON
                 yield return new { Array = new bool[] { false, true, true } };
                 yield return new string[] { "Test1", "Test2", "Test2" };
                 yield return new { Array = new string[] { "Test1", "Test2", "Test2" } };
+                yield return new { List = new List<string> { "Test1", "Test2", "Test2" } };
+                yield return new { HashSet = new HashSet<string> { "Test1", "Test2", "Test2" } };
+                yield return new { ArrayList = new ArrayList { "Test1", "Test2", "Test2" } };
+                yield return new { ArrayList = new ArrayList { "Test", 1, 1.1, false } };
                 yield return new object[] { null, null, null };
                 yield return new { Array = new object[] { null, null, null } };
                 yield return new string[][] { new string[] { "Test1", "Test2" }, new string[] { "Test3", "Test4" } };

@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Seri_Lite.JSON;
 using Seri_Lite_Unit_Tests.JSON.Models;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Seri_Lite_Unit_Tests.JSON
@@ -65,80 +66,45 @@ namespace Seri_Lite_Unit_Tests.JSON
             Assert.AreEqual(person, result);
         }
 
-        [Test]
-        public void Deserialize_ListOfStrings_ReturnsArray()
+        [TestCaseSource(typeof(DeserializationCollectionSource))]
+        public void Deserialize_Collection_ReturnsCollection<T>(T collection) where T : IEnumerable
         {
-            var people = new List<string> { "Chad", "Phill", "Petra" };
-            var serialized = _serializer.Serialize(people);
+            var serialized = _serializer.Serialize(collection);
 
-            var result = _serializer.Deserialize<List<string>>(serialized);
+            var result = _serializer.Deserialize<T>(serialized);
 
-            CollectionAssert.AreEqual(people, result);
+            CollectionAssert.AreEqual(collection, result);
         }
 
-        [Test]
-        public void Deserialize_ListOfDoubles_ReturnsArray()
+        class DeserializationCollectionSource : IEnumerable
         {
-            var numbers = new List<double> { -1, -0.5, 0.0, 1.55, 123.123456789 };
-            var serialized = _serializer.Serialize(numbers);
-
-            var result = _serializer.Deserialize<List<double>>(serialized);
-
-            CollectionAssert.AreEqual(numbers, result);
-        }
-
-        [Test]
-        public void Deserialize_ListOfObjects_ReturnsArray()
-        {
-            var people = new List<SimplePerson>
+            public IEnumerator GetEnumerator()
             {
-                new SimplePerson() { Name="Chad" },
-                new SimplePerson() { Name="Phill" },
-                new SimplePerson() { Name="Petra" },
-            };
-            var serialized = _serializer.Serialize(people);
-
-            var result = _serializer.Deserialize<List<SimplePerson>>(serialized);
-
-            CollectionAssert.AreEqual(people, result);
-        }
-
-        [Test]
-        public void Deserialize_ArrayOfStrings_ReturnsArray()
-        {
-            var people = new string[] { "Chad", "Phill", "Petra" };
-            var serialized = _serializer.Serialize(people);
-
-            var result = _serializer.Deserialize<string[]>(serialized);
-
-            CollectionAssert.AreEqual(people, result);
-        }
-
-        [Test]
-        public void Deserialize_ArrayOfDoubles_ReturnsArray()
-        {
-            var numbers = new double[] { -1, -0.5, 0.0, 1.55, 123.123456789 };
-            var serialized = _serializer.Serialize(numbers);
-
-            var result = _serializer.Deserialize<double[]>(serialized);
-
-            CollectionAssert.AreEqual(numbers, result);
-        }
-
-        [Test]
-        public void Deserialize_ArrayOfObjects_ReturnsArray()
-        {
-            var people = new SimplePerson[]
-            {
-                new SimplePerson() { Name="Chad" },
-                new SimplePerson() { Name="Phill" },
-                new SimplePerson() { Name="Petra" },
-            };
-            var serialized = _serializer.Serialize(people);
-
-            var result = _serializer.Deserialize<SimplePerson[]>(serialized);
-
-            CollectionAssert.AreEqual(people, result);
+                yield return new List<string> { "Chad", "Phill", "Petra" };
+                yield return new List<double> { -1, -0.5, 0.0, 1.55, 123.123456789 };
+                yield return new List<SimplePerson>
+                {
+                    new SimplePerson() { Name="Chad" },
+                    new SimplePerson() { Name="Phill" },
+                    new SimplePerson() { Name="Petra" },
+                };
+                yield return new string[] { "Chad", "Phill", "Petra" };
+                yield return new double[] { -1, -0.5, 0.0, 1.55, 123.123456789 };
+                yield return new SimplePerson[]
+                {
+                    new SimplePerson() { Name="Chad" },
+                    new SimplePerson() { Name="Phill" },
+                    new SimplePerson() { Name="Petra" },
+                };
+                yield return new HashSet<string> { "Chad", "Phill", "Petra" };
+                yield return new HashSet<double> { -1, -0.5, 0.0, 1.55, 123.123456789 };
+                yield return new HashSet<SimplePerson>
+                {
+                    new SimplePerson() { Name="Chad" },
+                    new SimplePerson() { Name="Phill" },
+                    new SimplePerson() { Name="Petra" },
+                };
+            }
         }
     }
 }
