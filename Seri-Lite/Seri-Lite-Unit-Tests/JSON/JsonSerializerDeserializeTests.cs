@@ -17,7 +17,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         [SetUp]
         public void SetUp()
         {
-            _serializer = new JsonSerializer();
+            _serializer = new JsonSerializerBuilder().Build();
         }
 
         [Test]

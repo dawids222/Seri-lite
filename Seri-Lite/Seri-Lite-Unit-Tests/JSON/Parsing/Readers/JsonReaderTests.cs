@@ -16,7 +16,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void SetUp()
         {
             _reader = new JsonReader();
-            _serializer = new JsonSerializer();
+            _serializer = new JsonSerializerBuilder().Build();
         }
 
         [Test]

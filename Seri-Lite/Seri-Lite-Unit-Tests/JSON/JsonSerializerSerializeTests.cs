@@ -22,7 +22,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         {
             _jsonReaderMock = new Mock<IJsonReader>();
 
-            _serializer = new JsonSerializer();
+            _serializer = new JsonSerializerBuilder().Build();
         }
 
         [TestCaseSource(typeof(SerializationObjectSource))]

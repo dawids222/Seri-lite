@@ -18,13 +18,6 @@ namespace Seri_Lite.JSON
         private readonly NullPropertyBehaviour _nullPropertyBehaviour;
         private readonly IPropertyNameResolver _propertyNameResolver;
 
-        public JsonSerializer()
-        {
-            _nullPropertyBehaviour = NullPropertyBehaviour.SERIALIZE;
-            _propertyNameResolver = new InheritCasePropertyNameResolver();
-            _jsonReader = new JsonReader();
-        }
-
         public JsonSerializer(
             NullPropertyBehaviour nullPropertyBehaviour,
             IJsonReader jsonReader,
