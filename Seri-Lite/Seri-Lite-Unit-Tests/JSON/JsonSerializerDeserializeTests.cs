@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Seri_Lite.JSON;
 using Seri_Lite.JSON.Parsing.Models;
+using Seri_Lite.JSON.Serialization.Property;
 using Seri_Lite_Unit_Tests.JSON.Models;
 using System.Collections;
 using System.Collections.Generic;
@@ -94,6 +95,27 @@ namespace Seri_Lite_Unit_Tests.JSON
             var result = _serializer.Deserialize<object>(serialized);
 
             Assert.That(result, Is.TypeOf<JsonArray>());
+        }
+
+        [Test]
+        public void Deserialize_LowerCaseProperties_ReturnsObject()
+        {
+            var person = new IntermediatePerson
+            {
+                Name = "Howard",
+                Age = 18,
+                Height = 185.5,
+                IsMarried = false,
+                Partner = new SimplePerson { Name = "Sara" },
+            };
+            _serializer = new JsonSerializerBuilder()
+                .SetPropertyNameResolver(new CamelCasePropertyNameResolver())
+                .Build();
+            var serialized = _serializer.Serialize(person);
+
+            var result = _serializer.Deserialize<IntermediatePerson>(serialized);
+
+            Assert.AreEqual(person, result);
         }
 
         [TestCaseSource(typeof(DeserializationPrimitiveAsObjectSource))]

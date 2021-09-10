@@ -1,4 +1,5 @@
-﻿using Seri_Lite.JSON.Enums;
+﻿using Seri_Lite.Extensions;
+using Seri_Lite.JSON.Enums;
 using Seri_Lite.JSON.Parsing.Models;
 using Seri_Lite.JSON.Parsing.Readers;
 using Seri_Lite.JSON.Serialization.Property;
@@ -51,7 +52,7 @@ namespace Seri_Lite.JSON
             var instance = Activator.CreateInstance(type);
             foreach (var prop in type.GetProperties())
             {
-                var token = obj.GetToken(prop.Name);
+                var token = GetTokenCaseInsensitive(obj, prop.Name);
                 object val;
                 if (token is null) { val = null; }
                 else if (token.IsPrimitive) { val = InnerDeserialize(prop.PropertyType, token.AsPrimitive()); }
@@ -60,6 +61,17 @@ namespace Seri_Lite.JSON
                 prop.SetValue(instance, val);
             }
             return instance;
+        }
+
+        private JsonToken GetTokenCaseInsensitive(JsonObject obj, string name)
+        {
+            var token = obj.GetToken(name);
+            if (token is null)
+            {
+                var invertedName = name.InvertFirstLetter();
+                token = obj.GetToken(invertedName);
+            }
+            return token;
         }
 
         private object DeserializeArray(Type type, JsonArray array)
