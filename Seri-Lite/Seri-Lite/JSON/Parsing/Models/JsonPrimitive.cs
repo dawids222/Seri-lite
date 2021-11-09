@@ -1,4 +1,5 @@
 ﻿using Seri_Lite.JSON.Parsing.Enums;
+using Seri_Lite.JSON.Parsing.Exceptions;
 using System;
 
 namespace Seri_Lite.JSON.Parsing.Models
@@ -17,21 +18,28 @@ namespace Seri_Lite.JSON.Parsing.Models
         public JsonPrimitive(double value) : this((object)value) { }
         public JsonPrimitive(bool value) : this((object)value) { }
         public JsonPrimitive(DateTime value) : this((object)value) { }
+        public JsonPrimitive(Guid value) : this((object)value) { }
         public JsonPrimitive(object value) : this(null, value) { }
         public JsonPrimitive(JsonToken parent, string value) : this(parent, (object)value) { }
         public JsonPrimitive(JsonToken parent, int value) : this(parent, (object)value) { }
         public JsonPrimitive(JsonToken parent, double value) : this(parent, (object)value) { }
         public JsonPrimitive(JsonToken parent, bool value) : this(parent, (object)value) { }
         public JsonPrimitive(JsonToken parent, DateTime value) : this(parent, (object)value) { }
+        public JsonPrimitive(JsonToken parent, Guid value) : this(parent, (object)value) { }
         private JsonPrimitive(JsonToken parent, object value) : base(parent)
         {
             _value = value;
             if (value is null) { _valueType = JsonPrimitiveType.NULL; }
-            if (value is string) { _valueType = JsonPrimitiveType.STRING; }
-            if (value is double) { _valueType = JsonPrimitiveType.DOUBLE; }
-            if (value is int) { _valueType = JsonPrimitiveType.INTEGER; }
-            if (value is bool) { _valueType = JsonPrimitiveType.BOOLEAN; }
-            // TODO: throw custom exception
+            else if (value is string) { _valueType = JsonPrimitiveType.STRING; }
+            else if (value is double) { _valueType = JsonPrimitiveType.DOUBLE; }
+            else if (value is int) { _valueType = JsonPrimitiveType.INTEGER; }
+            else if (value is bool) { _valueType = JsonPrimitiveType.BOOLEAN; }
+            else if (value is DateTime || value is Guid)
+            {
+                _valueType = JsonPrimitiveType.STRING;
+                _value = value.ToString();
+            }
+            else throw new JsonPrimitiveIncorrectTypeException(value.GetType());
         }
 
         public JsonPrimitiveType ValueType => _valueType;
