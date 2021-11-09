@@ -7,6 +7,5 @@
         INTEGER,
         DOUBLE,
         BOOLEAN,
-        DATE_TIME,
     }
 }

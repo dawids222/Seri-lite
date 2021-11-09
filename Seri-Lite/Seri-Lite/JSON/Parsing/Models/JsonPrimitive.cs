@@ -17,7 +17,7 @@ namespace Seri_Lite.JSON.Parsing.Models
         public JsonPrimitive(double value) : this((object)value) { }
         public JsonPrimitive(bool value) : this((object)value) { }
         public JsonPrimitive(DateTime value) : this((object)value) { }
-        private JsonPrimitive(object value) : this(null, value) { }
+        public JsonPrimitive(object value) : this(null, value) { }
         public JsonPrimitive(JsonToken parent, string value) : this(parent, (object)value) { }
         public JsonPrimitive(JsonToken parent, int value) : this(parent, (object)value) { }
         public JsonPrimitive(JsonToken parent, double value) : this(parent, (object)value) { }
@@ -31,7 +31,7 @@ namespace Seri_Lite.JSON.Parsing.Models
             if (value is double) { _valueType = JsonPrimitiveType.DOUBLE; }
             if (value is int) { _valueType = JsonPrimitiveType.INTEGER; }
             if (value is bool) { _valueType = JsonPrimitiveType.BOOLEAN; }
-            if (value is DateTime) { _valueType = JsonPrimitiveType.DATE_TIME; }
+            // TODO: throw custom exception
         }
 
         public JsonPrimitiveType ValueType => _valueType;
@@ -42,13 +42,16 @@ namespace Seri_Lite.JSON.Parsing.Models
         public bool IsDouble => _valueType == JsonPrimitiveType.DOUBLE;
         public bool IsInteger => _valueType == JsonPrimitiveType.INTEGER;
         public bool IsBoolean => _valueType == JsonPrimitiveType.BOOLEAN;
-        public bool IsDateTime => _valueType == JsonPrimitiveType.DATE_TIME;
+
+        public bool CanBeDateTime => IsString && DateTime.TryParse(AsString(), out _);
+        public bool CanBeGuid => IsString && Guid.TryParse(AsString(), out _);
 
         public object AsNull() => null;
         public string AsString() => _value as string;
         public double? AsDouble() => IsDouble ? (double)_value : null;
         public int? AsInteger() => IsInteger ? (int)_value : null;
         public bool? AsBoolean() => IsBoolean ? (bool)_value : null;
-        public DateTime? AsDateTime() => IsDateTime ? (DateTime)_value : null;
+        public DateTime? AsDateTime() => CanBeDateTime ? DateTime.Parse(AsString()) : null;
+        public Guid? AsGuid() => CanBeGuid ? Guid.Parse(AsString()) : null;
     }
 }
