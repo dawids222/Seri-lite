@@ -3,6 +3,7 @@ using Seri_Lite.JSON;
 using Seri_Lite.JSON.Parsing.Models;
 using Seri_Lite.JSON.Serialization.Property;
 using Seri_Lite_Unit_Tests.JSON.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -53,8 +54,10 @@ namespace Seri_Lite_Unit_Tests.JSON
         [Test]
         public void Deserialize_JsonObjectWithNestedObject_ReturnsObject()
         {
-            var person = new IntermediatePerson
+            var person = new AdvancePerson
             {
+                Id = Guid.Parse("17B1019F-AF9E-43AF-8C71-484274B9CC49"),
+                BirthDate = new DateTime(1996, 12, 21),
                 Name = "Howard",
                 Age = 18,
                 Height = 185.5,
@@ -63,7 +66,7 @@ namespace Seri_Lite_Unit_Tests.JSON
             };
             var serialized = _serializer.Serialize(person);
 
-            var result = _serializer.Deserialize<IntermediatePerson>(serialized);
+            var result = _serializer.Deserialize<AdvancePerson>(serialized);
 
             Assert.AreEqual(person, result);
         }
@@ -71,8 +74,10 @@ namespace Seri_Lite_Unit_Tests.JSON
         [Test]
         public void Deserialize_ObjectToObjectType_ReturnsToken()
         {
-            var person = new IntermediatePerson
+            var person = new AdvancePerson
             {
+                Id = Guid.Parse("17B1019F-AF9E-43AF-8C71-484274B9CC49"),
+                BirthDate = new DateTime(1996, 12, 21),
                 Name = "Howard",
                 Age = 18,
                 Height = 185.5,
@@ -100,8 +105,10 @@ namespace Seri_Lite_Unit_Tests.JSON
         [Test]
         public void Deserialize_LowerCaseProperties_ReturnsObject()
         {
-            var person = new IntermediatePerson
+            var person = new AdvancePerson
             {
+                Id = Guid.Parse("17B1019F-AF9E-43AF-8C71-484274B9CC49"),
+                BirthDate = new DateTime(1996, 12, 21),
                 Name = "Howard",
                 Age = 18,
                 Height = 185.5,
@@ -113,7 +120,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 .Build();
             var serialized = _serializer.Serialize(person);
 
-            var result = _serializer.Deserialize<IntermediatePerson>(serialized);
+            var result = _serializer.Deserialize<AdvancePerson>(serialized);
 
             Assert.AreEqual(person, result);
         }

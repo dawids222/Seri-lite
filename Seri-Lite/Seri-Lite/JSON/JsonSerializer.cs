@@ -120,6 +120,8 @@ namespace Seri_Lite.JSON
 
         private object DeserializePrimitive(Type type, JsonPrimitive primitive)
         {
+            if (type == typeof(Guid)) { return primitive.AsGuid(); }
+            if (type == typeof(DateTime)) { return primitive.AsDateTime(); }
             return primitive.Value;
         }
 
