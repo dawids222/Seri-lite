@@ -185,7 +185,8 @@ namespace Seri_Lite.JSON
             => type.IsPrimitive ||
                type == typeof(Decimal) ||
                type == typeof(String) ||
-               type == typeof(DateTime);
+               type == typeof(DateTime) ||
+               type == typeof(Guid);
 
         private static bool IsCollection(Type type)
             => typeof(IEnumerable).IsAssignableFrom(type);
@@ -209,10 +210,11 @@ namespace Seri_Lite.JSON
         {
             return type switch
             {
-                PrimitiveType.STRING => $"\"{value}\"",
+                PrimitiveType.STRING or
+                PrimitiveType.GUID => $"\"{value}\"",
                 PrimitiveType.BOOLEAN => value.ToString().ToLower(),
                 PrimitiveType.NUMERIC => value.ToString().Replace(",", "."),
-                PrimitiveType.DATE_TIME => $"\"{DateTime.Parse(value.ToString()).ToString("yyyy-MM-ddTHH:mm:ss")}\"",
+                PrimitiveType.DATE_TIME => $"\"{DateTime.Parse(value.ToString()):yyyy-MM-ddTHH:mm:ss}\"",
                 _ => throw new NotImplementedException(),
             };
         }
@@ -223,6 +225,7 @@ namespace Seri_Lite.JSON
             if (type == typeof(String)) { return PrimitiveType.STRING; }
             if (type == typeof(Boolean)) { return PrimitiveType.BOOLEAN; }
             if (type == typeof(DateTime)) { return PrimitiveType.DATE_TIME; }
+            if (type == typeof(Guid)) { return PrimitiveType.GUID; }
             return PrimitiveType.NUMERIC;
         }
 

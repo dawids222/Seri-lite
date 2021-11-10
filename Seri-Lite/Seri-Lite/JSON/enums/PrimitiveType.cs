@@ -6,5 +6,6 @@
         NUMERIC,
         BOOLEAN,
         DATE_TIME,
+        GUID,
     }
 }

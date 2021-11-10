@@ -80,6 +80,16 @@ namespace Seri_Lite_Unit_Tests.JSON
             Assert.That(actualExecutionTime, Is.LessThan(maxExecutionTime));
         }
 
+        [TestCaseSource(typeof(SerializationObjectSource))]
+        public void Serialize_ExecutesFasterThanMicrosoftJsonSerializer(object value)
+        {
+            var maxExecutionTime = MeasureExecutionTime(() => System.Text.Json.JsonSerializer.Serialize(value));
+
+            var actualExecutionTime = MeasureExecutionTime(() => _serializer.Serialize(value));
+
+            Assert.That(actualExecutionTime, Is.LessThan(maxExecutionTime));
+        }
+
         [Test]
         public void Constructor_NullPropertyNameResolver_Throws()
         {
@@ -108,6 +118,11 @@ namespace Seri_Lite_Unit_Tests.JSON
                 yield return 1.5;
                 yield return true;
                 yield return "Test";
+                yield return "va\"lue";
+                yield return "va\"\"lue";
+                yield return "va\\\"lue";
+                yield return new DateTime(2021, 9, 2);
+                yield return Guid.Parse("a90194f9-48c6-4a74-9d89-fd976cf1d93f");
                 yield return new { Name = "Test" };
                 yield return new { Person = new { Name = "Test1", Surname = "Test2" } };
                 yield return new { Names = new string[] { "Test1", "Test2" } };
@@ -129,11 +144,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 yield return new { Name = (string)null };
                 yield return new { People = (ICollection)null };
                 yield return new object[] { new { Name = "Test1", Surname = "Test2" }, new { Name = "Test3", Surname = "Test4" } };
-                yield return new { Person = new { Name = "Test1", Age = 18, Height = 180.5, Married = false, Address = new { City = "Test2", Street = "Test3" }, Pets = new object[] { new { Name = "Test4", Species = "Test5" }, new { Name = "Test6", Species = "Test7" }, }, }, };
-                yield return "va\"lue";
-                yield return "va\"\"lue";
-                yield return "va\\\"lue";
-                yield return new DateTime(2021, 9, 2);
+                yield return new { Person = new { Id = Guid.Parse("a90194f9-48c6-4a74-9d89-fd976cf1d93f"), BirthDate = new DateTime(2021, 9, 2), Name = "Test1", Age = 18, Height = 180.5, Married = false, Address = new { City = "Test2", Street = "Test3" }, Pets = new object[] { new { Name = "Test4", Species = "Test5" }, new { Name = "Test6", Species = "Test7" }, }, }, };
             }
         }
     }
