@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Seri_Lite.JSON.Parsing.Enums;
+using Seri_Lite.JSON.Parsing.Exceptions;
 using Seri_Lite.JSON.Parsing.Models;
 using System;
 using System.Collections;
@@ -96,6 +97,16 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
             var child = new JsonPrimitive(parent);
 
             Assert.AreEqual(root, child.Root);
+        }
+
+        [Test]
+        public void Constructor_IncorrectType_ThrowsIncorrectTypeException()
+        {
+            object value = new JsonPrimitiveTests();
+
+            void act() => new JsonPrimitive(value);
+
+            Assert.Throws<JsonPrimitiveIncorrectTypeException>(act);
         }
 
         [TestCaseSource(typeof(CanBeDateTimeTestBundleSource))]
