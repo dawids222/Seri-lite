@@ -26,7 +26,7 @@ namespace Seri_Lite.JSON.Parsing.Models
         public JsonPrimitive(JsonToken parent, bool value) : this(parent, (object)value) { }
         public JsonPrimitive(JsonToken parent, DateTime value) : this(parent, (object)value) { }
         public JsonPrimitive(JsonToken parent, Guid value) : this(parent, (object)value) { }
-        private JsonPrimitive(JsonToken parent, object value) : base(parent)
+        public JsonPrimitive(JsonToken parent, object value) : base(parent)
         {
             _value = value;
             if (value is null) { _valueType = JsonPrimitiveType.NULL; }
