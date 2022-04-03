@@ -10,11 +10,24 @@ using System.Collections.Generic;
 namespace Seri_Lite_Unit_Tests.JSON
 {
     [TestFixture]
-    public class JsonSerializerDeserializeTests
+    public class JsonSerializerDeserializeGenericTests : JsonSerializerDeserializeTestsBase
+    {
+        protected override T Deserialize<T>(string value) => _serializer.Deserialize<T>(value);
+    }
+
+    [TestFixture]
+    public class JsonSerializerDeserializeTypeTests : JsonSerializerDeserializeTestsBase
+    {
+        protected override T Deserialize<T>(string value) => (T)_serializer.Deserialize(typeof(T), value);
+    }
+
+    public abstract class JsonSerializerDeserializeTestsBase
     {
         // TODO: add tests for parsing FLOAT
 
-        private JsonSerializer _serializer;
+        protected JsonSerializer _serializer;
+
+        protected abstract T Deserialize<T>(string value);
 
         [SetUp]
         public void SetUp()
@@ -28,7 +41,7 @@ namespace Seri_Lite_Unit_Tests.JSON
             var person = new SimplePerson { Name = "Howard" };
             var serialized = _serializer.Serialize(person);
 
-            var result = _serializer.Deserialize<SimplePerson>(serialized);
+            var result = Deserialize<SimplePerson>(serialized);
 
             Assert.AreEqual(person, result);
         }
@@ -46,7 +59,7 @@ namespace Seri_Lite_Unit_Tests.JSON
             };
             var serialized = _serializer.Serialize(person);
 
-            var result = _serializer.Deserialize<IntermediatePerson>(serialized);
+            var result = Deserialize<IntermediatePerson>(serialized);
 
             Assert.AreEqual(person, result);
         }
@@ -66,7 +79,7 @@ namespace Seri_Lite_Unit_Tests.JSON
             };
             var serialized = _serializer.Serialize(person);
 
-            var result = _serializer.Deserialize<AdvancePerson>(serialized);
+            var result = Deserialize<AdvancePerson>(serialized);
 
             Assert.AreEqual(person, result);
         }
@@ -86,7 +99,7 @@ namespace Seri_Lite_Unit_Tests.JSON
             };
             var serialized = _serializer.Serialize(person);
 
-            var result = _serializer.Deserialize<object>(serialized);
+            var result = Deserialize<object>(serialized);
 
             Assert.That(result, Is.TypeOf<JsonObject>());
         }
@@ -97,7 +110,7 @@ namespace Seri_Lite_Unit_Tests.JSON
             var people = new List<string> { "Chad", "Phill", "Petra" };
             var serialized = _serializer.Serialize(people);
 
-            var result = _serializer.Deserialize<object>(serialized);
+            var result = Deserialize<object>(serialized);
 
             Assert.That(result, Is.TypeOf<JsonArray>());
         }
@@ -120,7 +133,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 .Build();
             var serialized = _serializer.Serialize(person);
 
-            var result = _serializer.Deserialize<AdvancePerson>(serialized);
+            var result = Deserialize<AdvancePerson>(serialized);
 
             Assert.AreEqual(person, result);
         }
@@ -130,7 +143,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         {
             var serialized = _serializer.Serialize(value);
 
-            var result = _serializer.Deserialize<object>(serialized);
+            var result = Deserialize<object>(serialized);
 
             Assert.AreEqual(value, result);
         }
@@ -152,7 +165,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         {
             var serialized = _serializer.Serialize(collection);
 
-            var result = _serializer.Deserialize<T>(serialized);
+            var result = Deserialize<T>(serialized);
 
             CollectionAssert.AreEqual(collection, result);
         }

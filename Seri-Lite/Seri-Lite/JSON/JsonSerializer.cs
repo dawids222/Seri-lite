@@ -33,11 +33,16 @@ namespace Seri_Lite.JSON
 
         public T Deserialize<T>(string value)
         {
-            var token = _jsonReader.Read(value);
-            return (T)InnerDeserialize(typeof(T), token);
+            return (T)Deserialize(typeof(T), value);
         }
 
-        private object InnerDeserialize(Type type, JsonToken token)
+        public object Deserialize(Type type, string value)
+        {
+            var token = _jsonReader.Read(value);
+            return Deserialize(type, token);
+        }
+
+        private object Deserialize(Type type, JsonToken token)
         {
             if (token.IsObject) return DeserializeObject(type, token.AsObject());
             if (token.IsArray) return DeserializeArray(type, token.AsArray());
@@ -55,9 +60,9 @@ namespace Seri_Lite.JSON
                 var token = GetTokenCaseInsensitive(obj, prop.Name);
                 object val;
                 if (token is null) { val = null; }
-                else if (token.IsPrimitive) { val = InnerDeserialize(prop.PropertyType, token.AsPrimitive()); }
-                else if (token.IsArray) { val = InnerDeserialize(prop.PropertyType, token.AsArray()); }
-                else { val = InnerDeserialize(prop.PropertyType, token.AsObject()); }
+                else if (token.IsPrimitive) { val = Deserialize(prop.PropertyType, token.AsPrimitive()); }
+                else if (token.IsArray) { val = Deserialize(prop.PropertyType, token.AsArray()); }
+                else { val = Deserialize(prop.PropertyType, token.AsObject()); }
                 prop.SetValue(instance, val);
             }
             return instance;
@@ -88,9 +93,9 @@ namespace Seri_Lite.JSON
             {
                 dynamic val;
                 if (token is null) { val = null; }
-                else if (token.IsPrimitive) { val = InnerDeserialize(elementType, token.AsPrimitive()); }
-                else if (token.IsArray) { val = InnerDeserialize(elementType, token.AsArray()); }
-                else { val = InnerDeserialize(elementType, token.AsObject()); }
+                else if (token.IsPrimitive) { val = Deserialize(elementType, token.AsPrimitive()); }
+                else if (token.IsArray) { val = Deserialize(elementType, token.AsArray()); }
+                else { val = Deserialize(elementType, token.AsObject()); }
                 values.Add((dynamic)val);
             }
 
