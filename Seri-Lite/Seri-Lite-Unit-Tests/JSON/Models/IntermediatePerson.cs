@@ -7,6 +7,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Models
     {
         public int Age { get; set; }
         public double Height { get; set; }
+        public float Salary { get; set; }
         public bool IsMarried { get; set; }
         public SimplePerson Partner { get; set; }
 
@@ -16,13 +17,14 @@ namespace Seri_Lite_Unit_Tests.JSON.Models
                    base.Equals(obj) &&
                    Age == person.Age &&
                    Height == person.Height &&
+                   Salary == person.Salary &&
                    IsMarried == person.IsMarried &&
                    EqualityComparer<SimplePerson>.Default.Equals(Partner, person.Partner);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(base.GetHashCode(), Age, Height, IsMarried, Partner);
+            return HashCode.Combine(base.GetHashCode(), Age, Height, Salary, IsMarried, Partner);
         }
     }
 }

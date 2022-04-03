@@ -127,6 +127,7 @@ namespace Seri_Lite.JSON
         {
             if (type == typeof(Guid)) { return primitive.AsGuid(); }
             if (type == typeof(DateTime)) { return primitive.AsDateTime(); }
+            if (type == typeof(float)) { return (float?)primitive.AsDouble(); }
             return primitive.Value;
         }
 

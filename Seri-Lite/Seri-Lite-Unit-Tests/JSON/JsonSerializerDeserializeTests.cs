@@ -23,8 +23,6 @@ namespace Seri_Lite_Unit_Tests.JSON
 
     public abstract class JsonSerializerDeserializeTestsBase
     {
-        // TODO: add tests for parsing FLOAT
-
         protected JsonSerializer _serializer;
 
         protected abstract T Deserialize<T>(string value);
@@ -74,6 +72,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 Name = "Howard",
                 Age = 18,
                 Height = 185.5,
+                Salary = 2500.99f,
                 IsMarried = false,
                 Partner = new SimplePerson { Name = "Sara" },
             };
