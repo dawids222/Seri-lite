@@ -144,49 +144,35 @@ namespace Seri_Lite.JSON
                 return $"\"{value}\"";
             }
 
-            var stringBuilder = new StringBuilder();
-
             var type = value.GetType();
             if (IsPrimitive(type))
             {
-                var serialized = SerializePrimitive(value);
-                stringBuilder.Append(serialized);
+                return SerializePrimitive(value);
             }
             else if (IsCollection(type))
             {
-                var serialized = SerializeCollection(value);
-                stringBuilder.Append(serialized);
+                return SerializeCollection(value);
             }
             else
             {
-                var serialized = SerializeObject(value);
-                stringBuilder.Append(serialized);
+                return SerializeObject(value);
             }
-
-            return stringBuilder.ToString();
         }
 
         private string Serialize(PropertyInfo property, object value)
         {
-            var stringBuilder = new StringBuilder();
-
             if (IsPrimitive(property.PropertyType))
             {
-                var serialized = SerializePrimitive(property, value);
-                stringBuilder.Append(serialized);
+                return SerializePrimitive(property, value);
             }
             else if (IsCollection(property.PropertyType))
             {
-                var serialized = SerializeCollection(property, value);
-                stringBuilder.Append(serialized);
+                return SerializeCollection(property, value);
             }
             else
             {
-                var serialized = SerializeObject(property, value);
-                stringBuilder.Append(serialized);
+                return SerializeObject(property, value);
             }
-
-            return stringBuilder.ToString();
         }
 
         private static bool IsPrimitive(Type type)
@@ -240,11 +226,9 @@ namespace Seri_Lite.JSON
         private string SerializeCollection(PropertyInfo property, object value)
         {
             var collectionValue = (IEnumerable)property.GetValue(value);
-            var stringBuilder = new StringBuilder();
             var propertyName = _propertyNameResolver.Resolve(property);
             var serialized = SerializeCollection(collectionValue);
-            stringBuilder.Append($"\"{propertyName}\":{serialized}");
-            return stringBuilder.ToString();
+            return $"\"{propertyName}\":{serialized}";
         }
 
         private string SerializeCollection(object value)
