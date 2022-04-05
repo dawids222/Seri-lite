@@ -4,6 +4,7 @@ using Seri_Lite.JSON;
 using Seri_Lite.JSON.Enums;
 using Seri_Lite.JSON.Parsing.Readers;
 using Seri_Lite.JSON.Serialization.Property;
+using Seri_Lite_Unit_Tests.JSON.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -136,6 +137,10 @@ namespace Seri_Lite_Unit_Tests.JSON
                 yield return new { HashSet = new HashSet<string> { "Test1", "Test2", "Test2" } };
                 yield return new { ArrayList = new ArrayList { "Test1", "Test2", "Test2" } };
                 yield return new { ArrayList = new ArrayList { "Test", 1, 1.1, false } };
+                yield return new { Dictionary = new Dictionary<string, string> { { "id", "1234" }, { "name", "Bob" } } };
+                yield return new Dictionary<string, string> { { "id", "1234" }, { "name", "Bob" } };
+                yield return new Dictionary<string, int> { { "id", 1 }, { "age", 25 } };
+                yield return new Dictionary<string, SimplePerson> { { "id", new SimplePerson { Name = "Juan" } }, { "age", new() } };
                 yield return new object[] { null, null, null };
                 yield return new { Array = new object[] { null, null, null } };
                 yield return new string[][] { new string[] { "Test1", "Test2" }, new string[] { "Test3", "Test4" } };

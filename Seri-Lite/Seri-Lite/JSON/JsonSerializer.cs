@@ -6,6 +6,7 @@ using Seri_Lite.JSON.Serialization.Property;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -54,6 +55,8 @@ namespace Seri_Lite.JSON
         {
             if (type == typeof(object)) { return obj; }
 
+            if (typeof(IDictionary).IsAssignableFrom(type)) { return DeserializeDictionary(type, obj); }
+
             var instance = Activator.CreateInstance(type);
             foreach (var prop in type.GetProperties())
             {
@@ -65,6 +68,26 @@ namespace Seri_Lite.JSON
                 else { val = Deserialize(prop.PropertyType, token.AsObject()); }
                 prop.SetValue(instance, val);
             }
+            return instance;
+        }
+
+        private object DeserializeDictionary(Type type, JsonObject obj)
+        {
+            var instance = (IDictionary)Activator.CreateInstance(type);
+            var keyType = instance.GetType().GetGenericArguments()[0];
+            if (!IsPrimitive(keyType))
+            {
+                throw new Exception($"{keyType.FullName} is unsupport IDictionary key type.");
+            }
+            var valueType = instance.GetType().GetGenericArguments()[1];
+            foreach (var prop in obj.GetProperties())
+            {
+                var converter = TypeDescriptor.GetConverter(keyType);
+                var key = converter.ConvertFromString(prop.Name);
+                var value = Deserialize(valueType, prop.Value);
+                instance.Add(key, value);
+            }
+
             return instance;
         }
 
@@ -235,6 +258,8 @@ namespace Seri_Lite.JSON
         {
             if (value is null) { return "null"; }
 
+            if (value is IDictionary) { return SerializeDictionary(value); }
+
             var collectionValue = (IEnumerable)value;
             var stringBuilder = new StringBuilder();
 
@@ -249,6 +274,30 @@ namespace Seri_Lite.JSON
             stringBuilder.Replace(",", "", stringBuilder.Length - 1, 1);
             stringBuilder.Append(']');
 
+            return stringBuilder.ToString();
+        }
+
+        private string SerializeDictionary(object value)
+        {
+            var dictionary = (IDictionary)value;
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append('{');
+            foreach (var key in dictionary.Keys)
+            {
+                var keyType = key.GetType();
+                if (!IsPrimitive(keyType))
+                {
+                    throw new Exception($"{keyType.FullName} is unsupport IDictionary key type.");
+                }
+
+                var serializedValue = Serialize(dictionary[key]);
+                stringBuilder.Append($"\"{key}\"");
+                stringBuilder.Append($":");
+                stringBuilder.Append($"{serializedValue}");
+                stringBuilder.Append(',');
+            }
+            stringBuilder.Replace(",", "", stringBuilder.Length - 1, 1);
+            stringBuilder.Append('}');
             return stringBuilder.ToString();
         }
 

@@ -137,6 +137,31 @@ namespace Seri_Lite_Unit_Tests.JSON
             Assert.AreEqual(person, result);
         }
 
+        [Test]
+        public void Deserialize_DictionaryStringString_ReturnsDictionary()
+        {
+            var dictionary = new Dictionary<string, string> { { "id", "1234" }, { "age", "25" } };
+            var serialized = _serializer.Serialize(dictionary);
+
+            var result = Deserialize<Dictionary<string, string>>(serialized);
+
+            CollectionAssert.AreEqual(dictionary, result);
+        }
+
+        [Test]
+        public void Deserialize_DictionaryIntSimplePerson_ReturnsDictionary()
+        {
+            var dictionary = new Dictionary<int, SimplePerson> {
+                { 1, new SimplePerson{ Name = "Guss" } },
+                { 2, new() }
+            };
+            var serialized = _serializer.Serialize(dictionary);
+
+            var result = Deserialize<Dictionary<int, SimplePerson>>(serialized);
+
+            CollectionAssert.AreEqual(dictionary, result);
+        }
+
         [TestCaseSource(typeof(DeserializationPrimitiveAsObjectSource))]
         public void Deserialize_PrimitiveToObjectType_ReturnsPrimitive(object value)
         {
