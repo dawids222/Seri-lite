@@ -12,32 +12,32 @@ namespace Seri_Lite_Unit_Tests.JSON
     [TestFixture]
     public class JsonSerializerDeserializeGenericTests : JsonSerializerDeserializeTestsBase
     {
-        protected override T Deserialize<T>(string value) => _serializer.Deserialize<T>(value);
+        protected override T Deserialize<T>(string value) => _converter.Deserialize<T>(value);
     }
 
     [TestFixture]
     public class JsonSerializerDeserializeTypeTests : JsonSerializerDeserializeTestsBase
     {
-        protected override T Deserialize<T>(string value) => (T)_serializer.Deserialize(typeof(T), value);
+        protected override T Deserialize<T>(string value) => (T)_converter.Deserialize(typeof(T), value);
     }
 
     public abstract class JsonSerializerDeserializeTestsBase
     {
-        protected JsonSerializer _serializer;
+        protected JsonConverter _converter;
 
         protected abstract T Deserialize<T>(string value);
 
         [SetUp]
         public void SetUp()
         {
-            _serializer = new JsonSerializerBuilder().Build();
+            _converter = new JsonConverterBuilder().Build();
         }
 
         [Test]
         public void Deserialize_JsonObjectWithSingleString_ReturnsObject()
         {
             var person = new SimplePerson { Name = "Howard" };
-            var serialized = _serializer.Serialize(person);
+            var serialized = _converter.Serialize(person);
 
             var result = Deserialize<SimplePerson>(serialized);
 
@@ -55,7 +55,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 IsMarried = false,
                 Partner = null,
             };
-            var serialized = _serializer.Serialize(person);
+            var serialized = _converter.Serialize(person);
 
             var result = Deserialize<IntermediatePerson>(serialized);
 
@@ -76,7 +76,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 IsMarried = false,
                 Partner = new SimplePerson { Name = "Sara" },
             };
-            var serialized = _serializer.Serialize(person);
+            var serialized = _converter.Serialize(person);
 
             var result = Deserialize<AdvancePerson>(serialized);
 
@@ -96,7 +96,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 IsMarried = false,
                 Partner = new SimplePerson { Name = "Sara" },
             };
-            var serialized = _serializer.Serialize(person);
+            var serialized = _converter.Serialize(person);
 
             var result = Deserialize<object>(serialized);
 
@@ -107,7 +107,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         public void Deserialize_CollectionToObjectType_ReturnsToken()
         {
             var people = new List<string> { "Chad", "Phill", "Petra" };
-            var serialized = _serializer.Serialize(people);
+            var serialized = _converter.Serialize(people);
 
             var result = Deserialize<object>(serialized);
 
@@ -127,10 +127,10 @@ namespace Seri_Lite_Unit_Tests.JSON
                 IsMarried = false,
                 Partner = new SimplePerson { Name = "Sara" },
             };
-            _serializer = new JsonSerializerBuilder()
+            _converter = new JsonConverterBuilder()
                 .SetPropertyNameResolver(new CamelCasePropertyNameResolver())
                 .Build();
-            var serialized = _serializer.Serialize(person);
+            var serialized = _converter.Serialize(person);
 
             var result = Deserialize<AdvancePerson>(serialized);
 
@@ -141,7 +141,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         public void Deserialize_DictionaryStringString_ReturnsDictionary()
         {
             var dictionary = new Dictionary<string, string> { { "id", "1234" }, { "age", "25" } };
-            var serialized = _serializer.Serialize(dictionary);
+            var serialized = _converter.Serialize(dictionary);
 
             var result = Deserialize<Dictionary<string, string>>(serialized);
 
@@ -155,7 +155,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 { 1, new SimplePerson{ Name = "Guss" } },
                 { 2, new() }
             };
-            var serialized = _serializer.Serialize(dictionary);
+            var serialized = _converter.Serialize(dictionary);
 
             var result = Deserialize<Dictionary<int, SimplePerson>>(serialized);
 
@@ -165,7 +165,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         [TestCaseSource(typeof(DeserializationPrimitiveAsObjectSource))]
         public void Deserialize_PrimitiveToObjectType_ReturnsPrimitive(object value)
         {
-            var serialized = _serializer.Serialize(value);
+            var serialized = _converter.Serialize(value);
 
             var result = Deserialize<object>(serialized);
 
@@ -187,7 +187,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         [TestCaseSource(typeof(DeserializationCollectionSource))]
         public void Deserialize_Collection_ReturnsCollection<T>(T collection) where T : IEnumerable
         {
-            var serialized = _serializer.Serialize(collection);
+            var serialized = _converter.Serialize(collection);
 
             var result = Deserialize<T>(serialized);
 

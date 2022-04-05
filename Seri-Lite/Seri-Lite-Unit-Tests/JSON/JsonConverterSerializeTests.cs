@@ -12,18 +12,18 @@ using System.Collections.Generic;
 namespace Seri_Lite_Unit_Tests.JSON
 {
     [TestFixture]
-    public class JsonSerializerSerializeTests
+    public class JsonConverterSerializeTests
     {
         private Mock<IJsonReader> _jsonReaderMock;
 
-        private JsonSerializer _serializer;
+        private JsonConverter _converter;
 
         [SetUp]
         public void SetUp()
         {
             _jsonReaderMock = new Mock<IJsonReader>();
 
-            _serializer = new JsonSerializerBuilder().Build();
+            _converter = new JsonConverterBuilder().Build();
         }
 
         [TestCaseSource(typeof(SerializationObjectSource))]
@@ -31,7 +31,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         {
             var expected = Newtonsoft.Json.JsonConvert.SerializeObject(value);
 
-            var result = _serializer.Serialize(value);
+            var result = _converter.Serialize(value);
 
             Assert.AreEqual(expected, result);
         }
@@ -40,7 +40,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         public void Serialize_PropertyNameCamelCase_ReturnsSameValueAsNewtonsoftJsonConvert(object value)
         {
             var propertyNameResolver = new CamelCasePropertyNameResolver();
-            _serializer = new JsonSerializer(NullPropertyBehaviour.SERIALIZE, _jsonReaderMock.Object, propertyNameResolver);
+            _converter = new JsonConverter(NullPropertyBehaviour.SERIALIZE, _jsonReaderMock.Object, propertyNameResolver);
             var settings = new Newtonsoft.Json.JsonSerializerSettings
             {
                 ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
@@ -50,7 +50,7 @@ namespace Seri_Lite_Unit_Tests.JSON
             };
             var expected = Newtonsoft.Json.JsonConvert.SerializeObject(value, settings);
 
-            var result = _serializer.Serialize(value);
+            var result = _converter.Serialize(value);
 
             Assert.AreEqual(expected, result);
         }
@@ -59,14 +59,14 @@ namespace Seri_Lite_Unit_Tests.JSON
         public void Serialize_NullValueIgnore_ReturnsSameValueAsNewtonsoftJsonConvert(object value)
         {
             var propertyNameResolver = new InheritCasePropertyNameResolver();
-            _serializer = new JsonSerializer(NullPropertyBehaviour.IGNORE, _jsonReaderMock.Object, propertyNameResolver);
+            _converter = new JsonConverter(NullPropertyBehaviour.IGNORE, _jsonReaderMock.Object, propertyNameResolver);
             var settings = new Newtonsoft.Json.JsonSerializerSettings
             {
                 NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore,
             };
             var expected = Newtonsoft.Json.JsonConvert.SerializeObject(value, settings);
 
-            var result = _serializer.Serialize(value);
+            var result = _converter.Serialize(value);
 
             Assert.AreEqual(expected, result);
         }
@@ -76,7 +76,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         {
             var maxExecutionTime = MeasureExecutionTime(() => Newtonsoft.Json.JsonConvert.SerializeObject(value));
 
-            var actualExecutionTime = MeasureExecutionTime(() => _serializer.Serialize(value));
+            var actualExecutionTime = MeasureExecutionTime(() => _converter.Serialize(value));
 
             Assert.That(actualExecutionTime, Is.LessThan(maxExecutionTime));
         }
@@ -86,7 +86,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         {
             var maxExecutionTime = MeasureExecutionTime(() => System.Text.Json.JsonSerializer.Serialize(value));
 
-            var actualExecutionTime = MeasureExecutionTime(() => _serializer.Serialize(value));
+            var actualExecutionTime = MeasureExecutionTime(() => _converter.Serialize(value));
 
             Assert.That(actualExecutionTime, Is.LessThan(maxExecutionTime));
         }
@@ -94,7 +94,7 @@ namespace Seri_Lite_Unit_Tests.JSON
         [Test]
         public void Constructor_NullPropertyNameResolver_Throws()
         {
-            void act() => new JsonSerializer(NullPropertyBehaviour.SERIALIZE, _jsonReaderMock.Object, null);
+            void act() => new JsonConverter(NullPropertyBehaviour.SERIALIZE, _jsonReaderMock.Object, null);
 
             Assert.Throws<ArgumentNullException>(act);
         }

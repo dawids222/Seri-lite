@@ -14,13 +14,13 @@ using System.Text;
 namespace Seri_Lite.JSON
 {
     // TODO: saparate code into at least 2 files
-    public class JsonSerializer : ISerializer
+    public class JsonConverter : IConverter
     {
         private readonly IJsonReader _jsonReader;
         private readonly NullPropertyBehaviour _nullPropertyBehaviour;
         private readonly IPropertyNameResolver _propertyNameResolver;
 
-        public JsonSerializer(
+        public JsonConverter(
             NullPropertyBehaviour nullPropertyBehaviour,
             IJsonReader jsonReader,
             IPropertyNameResolver propertyNameResolver)

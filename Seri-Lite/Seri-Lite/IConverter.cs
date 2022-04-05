@@ -2,7 +2,7 @@
 
 namespace Seri_Lite
 {
-    public interface ISerializer
+    public interface IConverter
     {
         string Serialize(object value);
         T Deserialize<T>(string value);

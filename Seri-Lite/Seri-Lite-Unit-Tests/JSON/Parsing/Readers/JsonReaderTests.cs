@@ -10,20 +10,20 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
     public class JsonReaderTests
     {
         private JsonReader _reader;
-        private JsonSerializer _serializer;
+        private JsonConverter _converter;
 
         [SetUp]
         public void SetUp()
         {
             _reader = new JsonReader();
-            _serializer = new JsonSerializerBuilder().Build();
+            _converter = new JsonConverterBuilder().Build();
         }
 
         [Test]
         public void Read1_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = new { Name = "Test" };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -37,7 +37,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read2_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = new { Name = "Test", Surname = "Test2" };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -53,7 +53,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read3_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = new { Name = "Tom", Height = 185.5, Age = 18, IsMarried = false, Partner = (object)null };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -80,7 +80,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read4_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = 5;
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -92,7 +92,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read5_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = new { Person = new { Name = "Ted" } };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -104,7 +104,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read6_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = new { Person = new { Address = new { PostalCode = 123 } } };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -116,7 +116,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read7_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = new dynamic[] { "1", 1.1, 1, true, null, new { Value = 1 } };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -133,7 +133,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read8_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = new dynamic[] { new dynamic[] { new { Value = 1 } } };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -145,7 +145,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read9_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = new { Value = "Test1 Test2" };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -156,7 +156,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read10_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = new { Child = new { Value = 10 } };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -167,7 +167,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read11_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = new object[] { new { Value = 10 } };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -178,7 +178,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void Read12_SimpleStringRepresentingObject_ReturnsJsonObject()
         {
             var obj = @"va\""lue";
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var token = _reader.Read(value);
 
@@ -218,7 +218,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void TryRead_Valid_ReturnsTrueAndJsonToken()
         {
             var obj = new { Value = "value" };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var result = _reader.TryRead(value, out var token);
 
@@ -230,7 +230,7 @@ namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
         public void TryRead_Invalid_ReturnsFalseAndNull()
         {
             var obj = new { Value = "va\"lue" };
-            var value = _serializer.Serialize(obj);
+            var value = _converter.Serialize(obj);
 
             var result = _reader.TryRead(value, out var token);
 
