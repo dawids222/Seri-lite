@@ -104,15 +104,18 @@ namespace Seri_Lite.JSON.Serialization.Converters
                 else if (token.IsPrimitive) { val = Deserialize(elementType, token.AsPrimitive()); }
                 else if (token.IsArray) { val = Deserialize(elementType, token.AsArray()); }
                 else { val = Deserialize(elementType, token.AsObject()); }
-                values.Add((dynamic)val);
+                values.Add(val);
             }
 
             if (type.IsAssignableTo(typeof(Array)))
             {
-                var instance = Array.CreateInstance(type.GetElementType(), values.Count);
+                var instance = Array.CreateInstance(elementType, values.Count);
                 for (var i = 0; i < values.Count; i++)
                 {
-                    instance.SetValue(values[i], i);
+                    var value = elementType.IsAssignableTo(typeof(Enum))
+                        ? Enum.Parse(elementType, values[i].ToString())
+                        : values[i];
+                    instance.SetValue(value, i);
                 }
                 return instance;
             }

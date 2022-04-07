@@ -2,6 +2,7 @@
 using Seri_Lite.JSON;
 using Seri_Lite.JSON.Parsing.Models;
 using Seri_Lite.JSON.Serialization.Property;
+using Seri_Lite_Unit_Tests.JSON.Enums;
 using Seri_Lite_Unit_Tests.JSON.Models;
 using System;
 using System.Collections;
@@ -223,6 +224,55 @@ namespace Seri_Lite_Unit_Tests.JSON
                     new SimplePerson() { Name="Petra" },
                 };
             }
+        }
+
+        [Test]
+        public void Deserialize_EnumValue_ReturnsEnum()
+        {
+            var value = SimpleEnum.VALUE_1;
+            var serialized = _converter.Serialize(value);
+
+            var result = _converter.Deserialize<SimpleEnum>(serialized);
+
+            Assert.AreEqual(value, result);
+        }
+
+        [Test]
+        public void Deserialize_ListOfEnums_ReturnsListOfEnums()
+        {
+            var value = new List<SimpleEnum> { SimpleEnum.VALUE_1, SimpleEnum.VALUE_2 };
+            var serialized = _converter.Serialize(value);
+
+            var result = _converter.Deserialize<List<SimpleEnum>>(serialized);
+
+            CollectionAssert.AreEqual(value, result);
+        }
+
+        [Test]
+        public void Deserialize_ArrayOfEnums_ReturnsArrayOfEnums()
+        {
+            var value = new SimpleEnum[] { SimpleEnum.VALUE_1, SimpleEnum.VALUE_2 };
+            var serialized = _converter.Serialize(value);
+
+            var result = _converter.Deserialize<SimpleEnum[]>(serialized);
+
+            CollectionAssert.AreEqual(value, result);
+        }
+
+        [Test]
+        public void Deserialize_ObjectWithEnumValue_ReturnsObject()
+        {
+            var value = new EnumObject();
+            var serialized = _converter.Serialize(value);
+
+            var result = _converter.Deserialize<EnumObject>(serialized);
+
+            Assert.AreEqual(value, result);
+        }
+
+        private record EnumObject
+        {
+            public SimpleEnum Value { get; set; }
         }
     }
 }

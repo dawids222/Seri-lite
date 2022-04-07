@@ -4,6 +4,7 @@ using Seri_Lite.JSON;
 using Seri_Lite.JSON.Enums;
 using Seri_Lite.JSON.Parsing.Readers;
 using Seri_Lite.JSON.Serialization.Property;
+using Seri_Lite_Unit_Tests.JSON.Enums;
 using Seri_Lite_Unit_Tests.JSON.Models;
 using System;
 using System.Collections;
@@ -122,6 +123,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 yield return "va\"lue";
                 yield return "va\"\"lue";
                 yield return "va\\\"lue";
+                yield return SimpleEnum.VALUE_1;
                 yield return new DateTime(2021, 9, 2);
                 yield return Guid.Parse("a90194f9-48c6-4a74-9d89-fd976cf1d93f");
                 yield return new { Name = "Test" };
@@ -137,6 +139,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 yield return new { HashSet = new HashSet<string> { "Test1", "Test2", "Test2" } };
                 yield return new { ArrayList = new ArrayList { "Test1", "Test2", "Test2" } };
                 yield return new { ArrayList = new ArrayList { "Test", 1, 1.1, false } };
+                yield return new { Array = new SimpleEnum[] { SimpleEnum.VALUE_1, SimpleEnum.VALUE_2 } };
                 yield return new { Dictionary = new Dictionary<string, string> { { "id", "1234" }, { "name", "Bob" } } };
                 yield return new Dictionary<string, string> { { "id", "1234" }, { "name", "Bob" } };
                 yield return new Dictionary<string, int> { { "id", 1 }, { "age", 25 } };
@@ -148,6 +151,7 @@ namespace Seri_Lite_Unit_Tests.JSON
                 yield return new { Person = (object)null };
                 yield return new { Name = (string)null };
                 yield return new { People = (ICollection)null };
+                yield return new { Name = "Test", Value = SimpleEnum.VALUE_1 };
                 yield return new object[] { new { Name = "Test1", Surname = "Test2" }, new { Name = "Test3", Surname = "Test4" } };
                 yield return new { Person = new { Id = Guid.Parse("a90194f9-48c6-4a74-9d89-fd976cf1d93f"), BirthDate = new DateTime(2021, 9, 2), Name = "Test1", Age = 18, Height = 180.5, Married = false, Address = new { City = "Test2", Street = "Test3" }, Pets = new object[] { new { Name = "Test4", Species = "Test5" }, new { Name = "Test6", Species = "Test7" }, }, }, };
             }

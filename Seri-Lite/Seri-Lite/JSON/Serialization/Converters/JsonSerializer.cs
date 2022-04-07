@@ -26,6 +26,7 @@ namespace Seri_Lite.JSON.Serialization.Converters
         {
             if (value is null) return "null";
             if (value is int) { return value.ToString(); }
+            if (value is Enum) { return ((int)value).ToString(); }
             if (value is string)
             {
                 value = value
