@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
-using Seri_Lite.JSON.Parsing.Enums;
-using Seri_Lite.JSON.Parsing.Exceptions;
-using Seri_Lite.JSON.Parsing.Models;
+using LibLite.Seri.Lite.JSON.Parsing.Enums;
+using LibLite.Seri.Lite.JSON.Parsing.Exceptions;
+using LibLite.Seri.Lite.JSON.Parsing.Models;
 using System;
 using System.Collections;
 
-namespace Seri_Lite_Unit_Tests.JSON.Parsing.Models
+namespace LibLite.Seri.Lite.Tests.JSON.Parsing.Models
 {
     [TestFixture]
     public class JsonPrimitiveTests

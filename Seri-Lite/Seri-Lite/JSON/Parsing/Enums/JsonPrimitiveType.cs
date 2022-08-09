@@ -1,4 +1,4 @@
-﻿namespace Seri_Lite.JSON.Parsing.Enums
+﻿namespace LibLite.Seri.Lite.JSON.Parsing.Enums
 {
     public enum JsonPrimitiveType
     {

@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31313.79
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seri-Lite", "Seri-Lite\Seri-Lite.csproj", "{1F87C04A-CF0E-44EA-B0E4-161EBC193102}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibLite.Seri.Lite", "Seri-Lite\LibLite.Seri.Lite.csproj", "{1F87C04A-CF0E-44EA-B0E4-161EBC193102}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seri-Lite-Unit-Tests", "Seri-Lite-Unit-Tests\Seri-Lite-Unit-Tests.csproj", "{308C6000-03BB-4395-A4B2-23989BF71BD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibLite.Seri.Lite.Tests", "Seri-Lite-Unit-Tests\LibLite.Seri.Lite.Tests.csproj", "{308C6000-03BB-4395-A4B2-23989BF71BD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

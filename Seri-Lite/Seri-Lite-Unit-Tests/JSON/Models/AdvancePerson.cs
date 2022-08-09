@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Seri_Lite_Unit_Tests.JSON.Models
+namespace LibLite.Seri.Lite.Tests.JSON.Models
 {
     internal class AdvancePerson : IntermediatePerson
     {

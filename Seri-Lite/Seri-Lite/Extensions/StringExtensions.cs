@@ -1,4 +1,4 @@
-﻿namespace Seri_Lite.Extensions
+﻿namespace LibLite.Seri.Lite.Extensions
 {
     public static class StringExtensions
     {

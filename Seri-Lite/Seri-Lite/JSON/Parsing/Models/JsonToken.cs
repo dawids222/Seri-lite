@@ -1,6 +1,6 @@
-﻿using Seri_Lite.JSON.Parsing.Enums;
+﻿using LibLite.Seri.Lite.JSON.Parsing.Enums;
 
-namespace Seri_Lite.JSON.Parsing.Models
+namespace LibLite.Seri.Lite.JSON.Parsing.Models
 {
     public abstract class JsonToken
     {

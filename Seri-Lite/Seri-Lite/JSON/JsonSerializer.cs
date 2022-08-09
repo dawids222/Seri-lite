@@ -1,8 +1,8 @@
-﻿using Seri_Lite.Extensions;
-using Seri_Lite.JSON.Enums;
-using Seri_Lite.JSON.Parsing.Models;
-using Seri_Lite.JSON.Parsing.Readers;
-using Seri_Lite.JSON.Serialization.Property;
+﻿using LibLite.Seri.Lite.Extensions;
+using LibLite.Seri.Lite.JSON.Enums;
+using LibLite.Seri.Lite.JSON.Parsing.Models;
+using LibLite.Seri.Lite.JSON.Parsing.Readers;
+using LibLite.Seri.Lite.JSON.Serialization.Property;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Seri_Lite.JSON
+namespace LibLite.Seri.Lite.JSON
 {
     // TODO: saparate code into at least 2 files
     public class JsonSerializer : ISerializer

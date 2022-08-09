@@ -1,9 +1,9 @@
-﻿using Seri_Lite.JSON.Parsing.Enums;
-using Seri_Lite.JSON.Parsing.Exceptions;
+﻿using LibLite.Seri.Lite.JSON.Parsing.Enums;
+using LibLite.Seri.Lite.JSON.Parsing.Exceptions;
 using System;
 using System.Collections.Generic;
 
-namespace Seri_Lite.JSON.Parsing.Models
+namespace LibLite.Seri.Lite.JSON.Parsing.Models
 {
     public class JsonObject : JsonToken
     {

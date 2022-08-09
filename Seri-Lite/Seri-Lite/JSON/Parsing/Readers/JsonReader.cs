@@ -1,10 +1,10 @@
-﻿using Seri_Lite.JSON.Parsing.Exceptions;
-using Seri_Lite.JSON.Parsing.Models;
+﻿using LibLite.Seri.Lite.JSON.Parsing.Exceptions;
+using LibLite.Seri.Lite.JSON.Parsing.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Seri_Lite.JSON.Parsing.Readers
+namespace LibLite.Seri.Lite.JSON.Parsing.Readers
 {
     public class JsonReader : IJsonReader
     {

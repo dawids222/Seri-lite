@@ -1,4 +1,4 @@
-﻿namespace Seri_Lite.JSON.Parsing.Models
+﻿namespace LibLite.Seri.Lite.JSON.Parsing.Models
 {
     public class JsonProperty
     {

@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
-using Seri_Lite.JSON;
-using Seri_Lite.JSON.Parsing.Exceptions;
-using Seri_Lite.JSON.Parsing.Readers;
+﻿using LibLite.Seri.Lite.JSON;
+using LibLite.Seri.Lite.JSON.Parsing.Exceptions;
+using LibLite.Seri.Lite.JSON.Parsing.Readers;
+using NUnit.Framework;
 using System.Collections;
 
-namespace Seri_Lite_Unit_Tests.JSON.Parsing.Readers
+namespace LibLite.Seri.Lite.Tests.JSON.Parsing.Readers
 {
     [TestFixture]
     public class JsonReaderTests

@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
-using Seri_Lite.Extensions;
+using LibLite.Seri.Lite.Extensions;
 using System.Collections.Generic;
 
-namespace Seri_Lite_Unit_Tests.Extensions
+namespace LibLite.Seri.Lite.Tests.Extensions
 {
     [TestFixture]
     public class StringExtensionsTests

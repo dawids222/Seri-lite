@@ -1,9 +1,9 @@
-﻿using Seri_Lite.JSON.Parsing.Enums;
+﻿using LibLite.Seri.Lite.JSON.Parsing.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Seri_Lite.JSON.Parsing.Models
+namespace LibLite.Seri.Lite.JSON.Parsing.Models
 {
     public class JsonArray : JsonToken
     {

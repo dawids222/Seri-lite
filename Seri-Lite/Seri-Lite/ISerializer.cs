@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Seri_Lite
+namespace LibLite.Seri.Lite
 {
     public interface ISerializer
     {

@@ -1,9 +1,9 @@
-﻿using Seri_Lite.JSON.Enums;
-using Seri_Lite.JSON.Parsing.Readers;
-using Seri_Lite.JSON.Serialization.Property;
+﻿using LibLite.Seri.Lite.JSON.Enums;
+using LibLite.Seri.Lite.JSON.Parsing.Readers;
+using LibLite.Seri.Lite.JSON.Serialization.Property;
 using System;
 
-namespace Seri_Lite.JSON
+namespace LibLite.Seri.Lite.JSON
 {
     public class JsonSerializerBuilder
     {

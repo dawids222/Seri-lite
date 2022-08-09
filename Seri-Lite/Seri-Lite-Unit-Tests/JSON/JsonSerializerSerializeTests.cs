@@ -1,15 +1,15 @@
-﻿using Moq;
+﻿using LibLite.Seri.Lite.JSON;
+using LibLite.Seri.Lite.JSON.Enums;
+using LibLite.Seri.Lite.JSON.Parsing.Readers;
+using LibLite.Seri.Lite.JSON.Serialization.Property;
+using LibLite.Seri.Lite.Tests.JSON.Models;
+using Moq;
 using NUnit.Framework;
-using Seri_Lite.JSON;
-using Seri_Lite.JSON.Enums;
-using Seri_Lite.JSON.Parsing.Readers;
-using Seri_Lite.JSON.Serialization.Property;
-using Seri_Lite_Unit_Tests.JSON.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Seri_Lite_Unit_Tests.JSON
+namespace LibLite.Seri.Lite.Tests.JSON
 {
     [TestFixture]
     public class JsonSerializerSerializeTests

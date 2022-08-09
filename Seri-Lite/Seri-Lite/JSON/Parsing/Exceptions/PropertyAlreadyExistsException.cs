@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Seri_Lite.JSON.Parsing.Exceptions
+namespace LibLite.Seri.Lite.JSON.Parsing.Exceptions
 {
     public class PropertyAlreadyExistsException : Exception
     {

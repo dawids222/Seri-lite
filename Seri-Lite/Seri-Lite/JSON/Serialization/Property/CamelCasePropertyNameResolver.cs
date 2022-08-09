@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Seri_Lite.JSON.Serialization.Property
+namespace LibLite.Seri.Lite.JSON.Serialization.Property
 {
     public class CamelCasePropertyNameResolver : IPropertyNameResolver
     {

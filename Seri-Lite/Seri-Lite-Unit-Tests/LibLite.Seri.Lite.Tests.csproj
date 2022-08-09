@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Seri_Lite_Unit_Tests</RootNamespace>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>LibLite.Seri.Lite.Tests</RootNamespace>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Seri-Lite\Seri-Lite.csproj" />
+    <ProjectReference Include="..\Seri-Lite\LibLite.Seri.Lite.csproj" />
   </ItemGroup>
 
 </Project>

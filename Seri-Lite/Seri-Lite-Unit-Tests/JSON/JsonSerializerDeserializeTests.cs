@@ -1,13 +1,13 @@
-﻿using NUnit.Framework;
-using Seri_Lite.JSON;
-using Seri_Lite.JSON.Parsing.Models;
-using Seri_Lite.JSON.Serialization.Property;
-using Seri_Lite_Unit_Tests.JSON.Models;
+﻿using LibLite.Seri.Lite.JSON;
+using LibLite.Seri.Lite.JSON.Parsing.Models;
+using LibLite.Seri.Lite.JSON.Serialization.Property;
+using LibLite.Seri.Lite.Tests.JSON.Models;
+using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Seri_Lite_Unit_Tests.JSON
+namespace LibLite.Seri.Lite.Tests.JSON
 {
     [TestFixture]
     public class JsonSerializerDeserializeGenericTests : JsonSerializerDeserializeTestsBase
