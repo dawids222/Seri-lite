@@ -6,7 +6,6 @@ using System;
 
 namespace Seri_Lite.JSON
 {
-    // TODO: saparate code into at least 2 files
     public class JsonConverter : IConverter
     {
         private readonly JsonSerializer _serializer;

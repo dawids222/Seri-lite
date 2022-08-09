@@ -6,9 +6,17 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using JsonType = Seri_Lite.JSON.Parsing.Enums.JsonTokenType;
 
 namespace Seri_Lite.JSON.Serialization.Converters
 {
+    // TODO:
+    // Null pointer behaviour
+    // Loop reference behaviour
+    // Enum behaviour
+
+    // Add IJsonSerializer interface
+    // + Serializers for (collections, objects, primitives, enums, ...)
     internal class JsonSerializer
     {
         private readonly NullPropertyBehaviour _nullPropertyBehaviour;
@@ -36,35 +44,31 @@ namespace Seri_Lite.JSON.Serialization.Converters
                 return $"\"{value}\"";
             }
 
-            var type = value.GetType();
-            if (type.IsJsonPrimitive())
+            var jsonType = GetJsonType(value.GetType());
+            return jsonType switch
             {
-                return SerializePrimitive(value);
-            }
-            else if (IsCollection(type))
-            {
-                return SerializeCollection(value);
-            }
-            else
-            {
-                return SerializeObject(value);
-            }
+                JsonType.PRIMITIVE => SerializePrimitive(value),
+                JsonType.ARRAY => SerializeCollection(value),
+                _ => SerializeObject(value),
+            };
         }
 
         private string Serialize(PropertyInfo property, object value)
         {
-            if (property.PropertyType.IsJsonPrimitive())
+            var jsonType = GetJsonType(property.PropertyType);
+            return jsonType switch
             {
-                return SerializePrimitive(property, value);
-            }
-            else if (IsCollection(property.PropertyType))
-            {
-                return SerializeCollection(property, value);
-            }
-            else
-            {
-                return SerializeObject(property, value);
-            }
+                JsonType.PRIMITIVE => SerializePrimitive(property, value),
+                JsonType.ARRAY => SerializeCollection(property, value),
+                _ => SerializeObject(property, value),
+            };
+        }
+
+        private static JsonType GetJsonType(Type type)
+        {
+            if (type.IsJsonPrimitive()) { return JsonType.PRIMITIVE; }
+            if (IsCollection(type)) { return JsonType.ARRAY; }
+            return JsonType.OBJECT;
         }
 
         private static bool IsCollection(Type type)
